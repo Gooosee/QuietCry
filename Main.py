@@ -62,28 +62,40 @@ class Person:
         self.anim = AnimatedSprite
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.front = 'right' #Направление взгляда, для того, чтобы прыжок был в нужную сторону
 
     def run(self, args):
         if args[0].key == pygame.K_LEFT:
-            self.anim(personRunLeft, self.pos_x - 30, self.pos_y)
+            self.pos_x -= 30
+            self.anim(personRunLeft, self.pos_x, self.pos_y)
+            self.front = 'left'
         elif args[0].key == pygame.K_RIGHT:
+            self.pos_x += 30
             self.anim(personRun, self.pos_x, self.pos_y)
+            self.front = 'right'
 
     def stop(self):
         pass
 
-    def jump(self):
-        pass
+    def jump(self, args):
+        if args[0].key == pygame.K_UP or args[0].key == pygame.K_SPACE:
+            self.pos_y -= 50
+            if self.front == 'right':
+                self.anim(personJump, self.pos_x, self.pos_y - 40)
+            else:
+                self.anim(personJumpLeft, self.pos_x, self.pos_y - 40)
 
     def fire(self):
         pass
 
     def update(self, *args):
-        if args[0] != pygame.K_UP:
+        if args[0].key == pygame.K_LEFT or args[0].key == pygame.K_RIGHT:
             self.run(args)
+        elif args[0].key == pygame.K_UP or args[0].key == pygame.K_SPACE:
+            self.jump(args)
 
 
-pers = Person(50, 50)
+pers = Person(50, 250)
 
 
 def main():  # главная функция
@@ -96,7 +108,6 @@ def main():  # главная функция
                 pers.update(event)
         screen.fill((0, 0, 0))
         person_sprites.draw(screen)
-
         pygame.display.flip()
 
 
