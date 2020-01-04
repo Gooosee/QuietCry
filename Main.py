@@ -10,12 +10,23 @@ personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
 
+personRunLeft = [pygame.transform.flip(personRun[0], True, False),
+                 pygame.transform.flip(personRun[1], True, False),
+                 pygame.transform.flip(personRun[2], True, False)]
+
 personJump = [LoadImage.load_image('anim1_person_jump_m4a1s.png', 'data'),
               LoadImage.load_image('anim2_person_jump_m4a1s.png', 'data'),
               LoadImage.load_image('anim3_person_jump_m4a1s.png', 'data'),
               LoadImage.load_image('anim4_person_jump_m4a1s.png', 'data'),
               LoadImage.load_image('anim5_person_jump_m4a1s.png', 'data'),
               LoadImage.load_image('anim6_person_jump_m4a1s.png', 'data')]
+
+personJumpLeft = [pygame.transform.flip(personJump[0], True, False),
+                  pygame.transform.flip(personJump[1], True, False),
+                  pygame.transform.flip(personJump[2], True, False),
+                  pygame.transform.flip(personJump[3], True, False),
+                  pygame.transform.flip(personJump[4], True, False),
+                  pygame.transform.flip(personJump[5], True, False)]
 
 personFire = []
 
@@ -31,10 +42,11 @@ tile_sprites = pygame.sprite.Group()
 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, frames, x, y):
-        super().__init__(all_sprites)
+        super().__init__(person_sprites)
         self.frames = frames
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
+        self.rect = self.image.get_rect()
         self.rect = self.rect.move(x, y)
 
     def wait(self):
@@ -45,13 +57,17 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.cur_frame += 1
 
 
-class Person(pygame.sprite.Sprite):
+class Person:
     def __init__(self, pos_x, pos_y):
-        super().__init__(person_sprites, all_sprites)
         self.anim = AnimatedSprite
+        self.pos_x = pos_x
+        self.pos_y = pos_y
 
-    def run(self):
-        self.anim(personRun, 50, 50)
+    def run(self, args):
+        if args[0].key == pygame.K_LEFT:
+            self.anim(personRunLeft, self.pos_x - 30, self.pos_y)
+        elif args[0].key == pygame.K_RIGHT:
+            self.anim(personRun, self.pos_x, self.pos_y)
 
     def stop(self):
         pass
@@ -63,7 +79,11 @@ class Person(pygame.sprite.Sprite):
         pass
 
     def update(self, *args):
-        pass
+        if args[0] != pygame.K_UP:
+            self.run(args)
+
+
+pers = Person(50, 50)
 
 
 def main():  # главная функция
@@ -72,6 +92,11 @@ def main():  # главная функция
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                pers.update(event)
+        screen.fill((0, 0, 0))
+        person_sprites.draw(screen)
+
         pygame.display.flip()
 
 
