@@ -7,6 +7,12 @@ size = width, height = 800, 800
 screen = pygame.display.set_mode(size)
 cur_frame = 0
 
+# Задержки для анимаций
+
+waitStop = [100, 100, 100]  # Стоя
+waitRun = [100, 150, 100]  # Набегу
+waitJump = [100, 100, 100, 100, 100, 100]  # В прыжке
+
 personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
@@ -98,18 +104,18 @@ class Person:
         global direction
         if keys[pygame.K_LEFT]:
             self.pos_x = self.pos_x - 15
-            self.anim(personRunLeft, self.pos_x - 30, self.pos_y, [100, 150, 100]).update()
+            self.anim(personRunLeft, self.pos_x - 30, self.pos_y, waitRun).update()
             direction = False  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT]:
             self.pos_x = self.pos_x + 15
-            self.anim(personRun, self.pos_x, self.pos_y, [100, 150, 100]).update()
+            self.anim(personRun, self.pos_x, self.pos_y, waitRun).update()
             direction = True  # Персонаж смотрит вправо
 
     def stop(self):  # Отсутствие движения
         if direction:
-            self.anim(personStop, self.pos_x, self.pos_y, [100, 100, 100]).update()
+            self.anim(personStop, self.pos_x, self.pos_y, waitStop).update()
         else:
-            self.anim(personStopLeft, self.pos_x - 30, self.pos_y, [100, 100, 100]).update()
+            self.anim(personStopLeft, self.pos_x - 30, self.pos_y, waitStop).update()
 
     def jump(self):  # Прыжок
         pass
