@@ -29,7 +29,25 @@ personJumpLeft = [pygame.transform.flip(personJump[0], True, False),
                   pygame.transform.flip(personJump[4], True, False),
                   pygame.transform.flip(personJump[5], True, False)]
 
-personFire = []
+personFire = [LoadImage.load_image('anim1_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+              LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data')]
+
+personFireLeft = [pygame.transform.flip(personFire[0], True, False),
+                  pygame.transform.flip(personFire[1], True, False),
+                  pygame.transform.flip(personFire[2], True, False),
+                  pygame.transform.flip(personFire[3], True, False),
+                  pygame.transform.flip(personFire[4], True, False),
+                  pygame.transform.flip(personFire[5], True, False),
+                  pygame.transform.flip(personFire[6], True, False),
+                  pygame.transform.flip(personFire[7], True, False),
+                  pygame.transform.flip(personFire[8], True, False)]
 
 personStop = [LoadImage.load_image('anim1_person_stop_m4a1s.png', 'data'),
               LoadImage.load_image('anim2_person_stop_m4a1s.png', 'data'),
