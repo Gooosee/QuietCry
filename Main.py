@@ -116,16 +116,16 @@ class Person(pygame.sprite.Sprite):
     def fire(self):  # Стрельба
         if direction:
             self.frames = personFireLeft
-            self.rect.x = self.pos_x - 5
+            self.rect.x = self.pos_x
             self.num_wait = waitFire
         else:
             self.frames = personFire
             self.rect.x = self.pos_x - 5
             self.num_wait = waitFire
-        bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)
+        if self.cur_frame in [2, 4, 6]:
+            bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)
 
     def wait(self):
-        print(self.cur_frame)
         pygame.time.wait(self.num_wait[self.cur_frame - 1])
 
     def update(self):
@@ -156,12 +156,12 @@ class Bullet(pygame.sprite.Sprite):
     def update(self, *args):
         if not self.direction_bul:
             if self.rect.x <= 800:
-                self.rect.x += 40
+                self.rect.x += 60
             else:
                 self.kill()
         else:
             if self.rect.x >= 0:
-                self.rect.x -= 40
+                self.rect.x -= 60
             else:
                 self.kill()
 
@@ -179,7 +179,7 @@ def main():  # главная функция
         screen.fill((0, 0, 0))
         all_sprites.draw(screen)
         all_sprites.update()
-        clock.tick(500)
+        clock.tick(50)
         pygame.display.flip()
 
 
