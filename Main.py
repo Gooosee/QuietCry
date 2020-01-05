@@ -155,7 +155,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self, *args):
         if not self.direction_bul:
-            if self.rect.x <= 600:
+            if self.rect.x <= 800:
                 self.rect.x += 40
             else:
                 self.kill()
