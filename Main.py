@@ -81,24 +81,24 @@ class Person(pygame.sprite.Sprite):
         self.pos_y = y
 
         self.cur_frame = 0  # Номер кадра
-        self.frames = personStop
-        self.num_wait = waitStop
+        self.frames = personStop  # Анимация стоя
+        self.num_wait = waitStop  # Задержки в анимации
         self.image = personStop[self.cur_frame]  # Изображение спрайта
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(self.pos_x, self.pos_y)
+        self.rect = self.rect.move(self.pos_x, self.pos_y)  # Смещение в точку нахождения пули
 
     def run(self, keys):  # Бег
         global direction
         if keys[pygame.K_LEFT]:
             self.frames = personRunLeft
             self.num_wait = waitRun
-            self.rect.x = self.pos_x - 40
-            self.pos_x -= 15
+            self.rect.x = self.pos_x - 40  # Выравнивание анимации
+            self.pos_x -= 15  # Смещение влево
             direction = True  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT]:
             self.frames = personRun
             self.num_wait = waitRun
-            self.pos_x += 15
+            self.pos_x += 15  # Смещение вправо
             direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
 
@@ -120,21 +120,21 @@ class Person(pygame.sprite.Sprite):
             self.num_wait = waitFire
         else:
             self.frames = personFire
-            self.rect.x = self.pos_x - 5
+            self.rect.x = self.pos_x - 5  # Выравнивание
             self.num_wait = waitFire
-        if self.cur_frame in [2, 4, 6]:
-            bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)
+        if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
+            bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)  # Создание пули
 
-    def wait(self):
+    def wait(self):  # Задержка
         pygame.time.wait(self.num_wait[self.cur_frame - 1])
 
     def update(self):
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
         if keys[pygame.K_UP]:  # Нажат прыжок
             self.jump()
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавишь для бега
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавиши для бега
             self.run(keys)
-        elif keys[pygame.K_h]:
+        elif keys[pygame.K_h]:  # Нажатие клавиши "h" для стрельбы
             self.fire()
         else:
             self.stop()  # отсутствие движения
@@ -143,13 +143,13 @@ class Person(pygame.sprite.Sprite):
         self.image = self.frames[self.cur_frame - 1]
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(pygame.sprite.Sprite):  # Класс пуль
     def __init__(self, x, y, direction_bul):
         super().__init__(bullet_sprites, all_sprites)
         self.x, self.y, self.direction_bul = x, y, direction_bul
-        self.image = bull
+        self.image = bull  # Изображение пули
         self.rect = self.image.get_rect()
-        if direction_bul:
+        if direction_bul:  # Проверка направления и смещение координаты появления пули
             self.x -= 115
         self.rect = self.rect.move(self.x, self.y)
 
@@ -158,12 +158,12 @@ class Bullet(pygame.sprite.Sprite):
             if self.rect.x <= 800:
                 self.rect.x += 60
             else:
-                self.kill()
+                self.kill()  # Уничтожение пуль вышедших за границы экрана
         else:
             if self.rect.x >= 0:
                 self.rect.x -= 60
             else:
-                self.kill()
+                self.kill()  # Уничтожение пуль вышедших за границы экрана
 
 
 pers = Person(500, 500)  # Начальное положение персонажа
@@ -177,8 +177,8 @@ def main():  # главная функция
             if event.type == pygame.QUIT:
                 running = False
         screen.fill((0, 0, 0))
-        all_sprites.draw(screen)
-        all_sprites.update()
+        all_sprites.draw(screen)  # Отображение всех спрайтов
+        all_sprites.update()  # Обновление спрайтов
         clock.tick(50)
         pygame.display.flip()
 
