@@ -90,13 +90,13 @@ class Person(pygame.sprite.Sprite):
 
     def run(self, keys):  # Бег
         global direction
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.frames = personRunLeft
             self.num_wait = waitRun
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
             self.pos_x -= 8  # Смещение влево
             direction = True  # Персонаж смотрит влево
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.frames = personRun
             self.num_wait = waitRun
             self.pos_x += 8  # Смещение вправо
@@ -168,18 +168,19 @@ class Person(pygame.sprite.Sprite):
         if self.re20:
             self.rect.y += 55
             self.re20 = False
-        if keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавиши для бега
+        if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d]:  # Нажаты клавиши для
+            # бега
             self.run(keys)
             running = True
         if not self.if_jump:
-            if keys[pygame.K_UP]:  # Нажат прыжок
+            if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
                 self.rect.y -= 20
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
 
-            elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
+            elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_d]):
                 self.stop()  # отсутствие движения
         else:
             self.jump()
