@@ -9,7 +9,7 @@ screen = pygame.display.set_mode(size)
 # Задержки для анимаций
 
 waitStop = [100, 100, 100]  # Стоя
-waitRun = [100, 150, 100]  # Набегу
+waitRun = [100, 100, 100]  # Набегу
 waitJump = [100, 100, 100, 100, 100, 100]  # В прыжке
 waitFire = [100, 100, 100, 100, 100, 100, 100, 100, 100]
 
@@ -78,8 +78,9 @@ class Person(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         # Начальные координаты персонажа
         self.pos_x = x
+        self.re20 = False
         self.pos_y = y
-
+        self.if_jump = False
         self.cur_frame = 0  # Номер кадра
         self.frames = personStop  # Анимация стоя
         self.num_wait = waitStop  # Задержки в анимации
@@ -93,12 +94,12 @@ class Person(pygame.sprite.Sprite):
             self.frames = personRunLeft
             self.num_wait = waitRun
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 15  # Смещение влево
+            self.pos_x -= 5  # Смещение влево
             direction = True  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT]:
             self.frames = personRun
             self.num_wait = waitRun
-            self.pos_x += 15  # Смещение вправо
+            self.pos_x += 5  # Смещение вправо
             direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
 
@@ -111,7 +112,40 @@ class Person(pygame.sprite.Sprite):
             self.num_wait = waitStop
 
     def jump(self):  # Прыжок
-        pass
+        if direction:
+            self.frames = personJumpLeft[:1]
+            self.num_wait = waitJump[:1]
+        else:
+            self.frames = personJump[:1]
+            self.num_wait = waitJump[:1]
+        if self.jump_count > 0:
+            if direction:
+                self.frames = personJumpLeft[2:3]
+                self.num_wait = waitJump[2:3]
+            else:
+                self.frames = personJump[2:3]
+                self.num_wait = waitJump[2:3]
+            self.rect.y -= self.jump_count ** 2 / 2
+            self.jump_count -= 1
+        else:
+            if direction:
+                self.frames = personJumpLeft[3:4]
+                self.num_wait = waitJump[3:4]
+            else:
+                self.frames = personJump[3:4]
+                self.num_wait = waitJump[3:4]
+            self.rect.y += self.jump_count ** 2 / 2
+            self.jump_count -= 1
+        if self.jump_count == -10:
+            if direction:
+                self.frames = personJumpLeft[5:]
+                self.num_wait = waitJump[5:]
+            else:
+                self.frames = personJump[5:]
+                self.num_wait = waitJump[5:]
+            self.if_jump = False
+            self.re20 = True
+            self.rect.y += 20
 
     def fire(self):  # Стрельба
         if direction:
@@ -130,14 +164,22 @@ class Person(pygame.sprite.Sprite):
 
     def update(self):
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
-        if keys[pygame.K_UP]:  # Нажат прыжок
-            self.jump()
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавиши для бега
+        if self.re20:
+            self.rect.y += 55
+            self.re20 = False
+        if keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавиши для бега
             self.run(keys)
-        elif keys[pygame.K_h]:  # Нажатие клавиши "h" для стрельбы
-            self.fire()
+        if not self.if_jump:
+            if keys[pygame.K_UP]:  # Нажат прыжок
+                self.if_jump = True
+                self.jump_count = 10
+                self.rect.y -= 20
+            elif keys[pygame.K_h]:  # Нажатие клавиши "h" для стрельбы
+                self.fire()
+            elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
+                self.stop()  # отсутствие движения
         else:
-            self.stop()  # отсутствие движения
+            self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.wait()
         self.image = self.frames[self.cur_frame - 1]
@@ -179,7 +221,8 @@ def main():  # главная функция
         screen.fill((0, 0, 0))
         all_sprites.draw(screen)  # Отображение всех спрайтов
         all_sprites.update()  # Обновление спрайтов
-        clock.tick(50)
+        clock.tick(60)
+        pygame.time.delay(10)
         pygame.display.flip()
 
 
