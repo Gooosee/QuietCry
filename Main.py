@@ -94,12 +94,12 @@ class Person(pygame.sprite.Sprite):
             self.frames = personRunLeft
             self.num_wait = waitRun
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 5  # Смещение влево
+            self.pos_x -= 8  # Смещение влево
             direction = True  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT]:
             self.frames = personRun
             self.num_wait = waitRun
-            self.pos_x += 5  # Смещение вправо
+            self.pos_x += 8  # Смещение вправо
             direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
 
@@ -163,19 +163,22 @@ class Person(pygame.sprite.Sprite):
         pygame.time.wait(self.num_wait[self.cur_frame - 1])
 
     def update(self):
+        running = False
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
         if self.re20:
             self.rect.y += 55
             self.re20 = False
         if keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:  # Нажаты клавиши для бега
             self.run(keys)
+            running = True
         if not self.if_jump:
             if keys[pygame.K_UP]:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
                 self.rect.y -= 20
-            elif keys[pygame.K_h]:  # Нажатие клавиши "h" для стрельбы
+            elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
+
             elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]):
                 self.stop()  # отсутствие движения
         else:
