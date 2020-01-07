@@ -125,11 +125,11 @@ class Person(pygame.sprite.Sprite):
             self.direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 8  # Смещение влево
+            self.pos_x -= 10  # Смещение влево
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction = False  # Персонаж смотрит вправо
             self.frames = personRun
-            self.pos_x += 8  # Смещение вправо
+            self.pos_x += 10  # Смещение вправо
         self.rect.x = self.pos_x
 
     def stop(self):  # Отсутствие движения
