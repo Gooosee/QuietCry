@@ -103,37 +103,39 @@ all_sprites = pygame.sprite.Group()
 tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 direction = False
+person_pos_x, person_pos_y = 505, 505
 
 
 class Person(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__(all_sprites)
         # Начальные координаты персонажа
-        self.pos_x = x
+        person_pos_x = x
+        person_pos_y = y
         self.re20 = False
-        self.pos_y = y
         self.if_jump = False
         self.cur_frame = 0  # Номер кадра
         self.frames = personStop  # Анимация стоя
         self.num_wait = waitStop  # Задержки в анимации
         self.image = personStop[self.cur_frame]  # Изображение спрайта
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(self.pos_x, self.pos_y)  # Смещение в точку нахождения пули
+        self.rect = self.rect.move(person_pos_x, person_pos_y)  # Смещение в точку нахождения пули
 
     def run(self, keys):  # Бег
+        global person_pos_x, person_pos_y
         global direction
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.frames = personRunLeft
             self.num_wait = waitRun
-            self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 8  # Смещение влево
+            self.rect.x = person_pos_x - 40  # Выравнивание анимации
+            person_pos_x -= 8  # Смещение влево
             direction = True  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.frames = personRun
             self.num_wait = waitRun
-            self.pos_x += 8  # Смещение вправо
+            person_pos_x += 8  # Смещение вправо
             direction = False  # Персонаж смотрит вправо
-        self.rect.x = self.pos_x
+        self.rect.x = person_pos_x
 
     def stop(self):  # Отсутствие движения
         if direction:
@@ -182,14 +184,14 @@ class Person(pygame.sprite.Sprite):
     def fire(self):  # Стрельба
         if direction:
             self.frames = personFireLeft
-            self.rect.x = self.pos_x
+            self.rect.x = person_pos_x
             self.num_wait = waitFire
         else:
             self.frames = personFire
-            self.rect.x = self.pos_x - 5  # Выравнивание
+            self.rect.x = person_pos_x - 5  # Выравнивание
             self.num_wait = waitFire
         if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
-            bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)  # Создание пули
+            bul = Bullet(person_pos_x + 110, person_pos_y + 36, direction)  # Создание пули
 
     def wait(self):  # Задержка
         pygame.time.wait(self.num_wait[self.cur_frame - 1])
@@ -265,7 +267,7 @@ class Platforms(pygame.sprite.Sprite):
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
     def generate_level(level):
-        new_player, x, y = None, None, None
+        x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if level[y][x] == '#':
@@ -274,6 +276,9 @@ class Platforms(pygame.sprite.Sprite):
                     Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
         # вернем размер поля в клетках
         return x, y
+
+    def update(self):
+        pass
 
 
 tile_width = 105
