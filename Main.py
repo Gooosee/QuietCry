@@ -1,3 +1,5 @@
+from random import choice
+
 import pygame
 import LoadImage
 
@@ -64,6 +66,30 @@ personStopLeft = [pygame.transform.flip(personStop[0], True, False),
                   pygame.transform.flip(personStop[1], True, False),
                   pygame.transform.flip(personStop[2], True, False),
                   pygame.transform.flip(personStop[3], True, False)]
+
+enemyARun = [LoadImage.load_image('anim1_enemyA_run.png', 'data'),
+             LoadImage.load_image('anim2_enemyA_run.png', 'data'),
+             LoadImage.load_image('anim3_enemyA_run.png', 'data'),
+             LoadImage.load_image('anim4_enemyA_run.png', 'data'),
+             LoadImage.load_image('anim5_enemyA_run.png', 'data')]
+
+enemyARunLeft = [pygame.transform.flip(enemyARun[0], True, False),
+                 pygame.transform.flip(enemyARun[1], True, False),
+                 pygame.transform.flip(enemyARun[2], True, False),
+                 pygame.transform.flip(enemyARun[3], True, False),
+                 pygame.transform.flip(enemyARun[4], True, False)]
+
+enemyAJump = [LoadImage.load_image('anim1_enemyA_jump.png', 'data'),
+              LoadImage.load_image('anim2_enemyA_jump.png', 'data'),
+              LoadImage.load_image('anim3_enemyA_jump.png', 'data'),
+              LoadImage.load_image('anim4_enemyA_jump.png', 'data'),
+              LoadImage.load_image('anim5_enemyA_jump.png', 'data')]
+
+enemyAJumpLeft = [pygame.transform.flip(enemyAJump[0], True, False),
+                  pygame.transform.flip(enemyAJump[1], True, False),
+                  pygame.transform.flip(enemyAJump[2], True, False),
+                  pygame.transform.flip(enemyAJump[3], True, False),
+                  pygame.transform.flip(enemyAJump[4], True, False)]
 
 bull = LoadImage.load_image('bullet.png', 'data')
 person_sprites = pygame.sprite.GroupSingle()
@@ -211,11 +237,53 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
             else:
                 self.kill()  # Уничтожение пуль вышедших за границы экрана
 
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(tile_sprites, all_sprites)
+        self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
+
+
+class Platforms(pygame.sprite.Sprite):
+    def load_level(filename):
+        filename = "data/" + filename
+        # читаем уровень, убирая символы перевода строки
+        with open(filename, 'r') as mapFile:
+            level_map = [line.strip() for line in mapFile]
+
+        # и подсчитываем максимальную длину
+        max_width = max(map(len, level_map))
+
+        # дополняем каждую строку пустыми клетками ('.')
+        return list(map(lambda x: x.ljust(max_width, '.'), level_map))
+
+    def generate_level(level):
+        new_player, x, y = None, None, None
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                if level[y][x] == '#':
+                    Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
+                elif level[y][x] == '@':
+                    Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
+        # вернем размер поля в клетках
+        return x, y
+
+
+tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
+               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
+               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
+               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
+               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
+               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
+
+tile_width = 105
+tile_height = 21
 
 pers = Person(500, 500)  # Начальное положение персонажа
 
 
 def main():  # главная функция
+    level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
     clock = pygame.time.Clock()
     running = True
     while running:
