@@ -9,15 +9,6 @@ pygame.init()
 size = width, height = 840, 840
 screen = pygame.display.set_mode(size)
 
-# Задержки для анимаций
-
-waitStop = [100, 100, 100]  # Стоя
-waitRun = [100, 100, 100]  # Набегу
-waitJump = [100, 100, 100, 100, 100, 100]  # В прыжке
-waitFire = [100, 100, 100, 100, 100, 100, 100, 100, 100]
-
-waitRunEnemyA = [100, 100, 100, 100, 100]
-waitJumpEnemyA = [100, 100, 100, 100, 100]
 
 personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
@@ -95,12 +86,22 @@ enemyAJumpLeft = [pygame.transform.flip(enemyAJump[0], True, False),
                   pygame.transform.flip(enemyAJump[3], True, False),
                   pygame.transform.flip(enemyAJump[4], True, False)]
 
+enemyAKick = [LoadImage.load_image('anim1_enemyA_kick.png', 'data'),
+              LoadImage.load_image('anim2_enemyA_kick.png', 'data'),
+              LoadImage.load_image('anim3_enemyA_kick.png', 'data'),
+              LoadImage.load_image('anim4_enemyA_kick.png', 'data')]
+
+enemyAKickLeft = [pygame.transform.flip(enemyAKick[0], True, False),
+                  pygame.transform.flip(enemyAKick[1], True, False),
+                  pygame.transform.flip(enemyAKick[2], True, False),
+                  pygame.transform.flip(enemyAKick[3], True, False)]
+
 bull = LoadImage.load_image('bullet.png', 'data')
 person_sprites = pygame.sprite.GroupSingle()
 all_sprites = pygame.sprite.Group()
 tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
-direction = False
+enemy_sprites = pygame.sprite.Group()
 
 
 class Person(pygame.sprite.Sprite):
@@ -108,91 +109,76 @@ class Person(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         # Начальные координаты персонажа
         self.pos_x = x
+        self.hp = 150
         self.re20 = False
         self.pos_y = y
         self.if_jump = False
+        self.direction = False
         self.cur_frame = 0  # Номер кадра
         self.frames = personStop  # Анимация стоя
-        self.num_wait = waitStop  # Задержки в анимации
         self.image = personStop[self.cur_frame]  # Изображение спрайта
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(self.pos_x, self.pos_y)
 
     def run(self, keys):  # Бег
-        global direction
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            direction = True  # Персонаж смотрит влево
+            self.direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
-            self.num_wait = waitRun
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
             self.pos_x -= 8  # Смещение влево
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            direction = False  # Персонаж смотрит вправо
+            self.direction = False  # Персонаж смотрит вправо
             self.frames = personRun
-            self.num_wait = waitRun
             self.pos_x += 8  # Смещение вправо
         self.rect.x = self.pos_x
 
     def stop(self):  # Отсутствие движения
-        if direction:
+        if self.direction:
             self.frames = personStopLeft
-            self.num_wait = waitStop
         else:
             self.frames = personStop
-            self.num_wait = waitStop
 
     def jump(self):  # Прыжок
-        if direction:
+        if self.direction:
             self.frames = personJumpLeft[:1]
-            self.num_wait = waitJump[:1]
         else:
             self.frames = personJump[:1]
-            self.num_wait = waitJump[:1]
         if self.jump_count > 0:
-            if direction:
+            if self.direction:
                 self.frames = personJumpLeft[2:3]
-                self.num_wait = waitJump[2:3]
             else:
                 self.frames = personJump[2:3]
-                self.num_wait = waitJump[2:3]
             self.rect.y -= self.jump_count ** 2 / 2
             self.jump_count -= 1
         else:
-            if direction:
+            if self.direction:
                 self.frames = personJumpLeft[3:4]
-                self.num_wait = waitJump[3:4]
             else:
                 self.frames = personJump[3:4]
-                self.num_wait = waitJump[3:4]
             self.rect.y += self.jump_count ** 2 / 2
             self.jump_count -= 1
         if self.jump_count == -10:
-            if direction:
+            if self.direction:
                 self.frames = personJumpLeft[5:]
-                self.num_wait = waitJump[5:]
             else:
                 self.frames = personJump[5:]
-                self.num_wait = waitJump[5:]
             self.if_jump = False
             self.re20 = True
             self.rect.y += 20
 
     def fire(self):  # Стрельба
-        if direction:
+        if self.direction:
             self.frames = personFireLeft
             self.rect.x = self.pos_x
-            self.num_wait = waitFire
         else:
             self.frames = personFire
             self.rect.x = self.pos_x - 5  # Выравнивание
-            self.num_wait = waitFire
         if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
-            bul = Bullet(self.pos_x + 110, self.pos_y + 36, direction)  # Создание пули
-
-    def wait(self):  # Задержка
-        pygame.time.wait(self.num_wait[self.cur_frame - 1])
+            bul = Bullet(self.pos_x + 110, self.pos_y + 36, self.direction)  # Создание пули
 
     def update(self):
+        if self.hp <= 0:
+            self.kill()
         running = False
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
         if self.re20:
@@ -215,7 +201,6 @@ class Person(pygame.sprite.Sprite):
         else:
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        #self.wait()
         self.image = self.frames[self.cur_frame - 1]
 
 
@@ -240,94 +225,90 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
                 self.rect.x -= 60
             else:
                 self.kill()  # Уничтожение пуль вышедших за границы экрана
+        if len(pygame.sprite.spritecollide(self, enemy_sprites, False)) >= 1:
+            self.kill()
 
 
 class EnemyA(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__(all_sprites)
+        super().__init__(all_sprites, enemy_sprites)
         # Начальные координаты персонажа
+        self.hp = 40
         self.pos_x = x
         self.pos_y = y
+        self.direction = False
         self.if_jump = False
         self.frames = enemyARun  # Анимация стоя
-        self.num_wait = waitRunEnemyA
         self.cur_frame = 0  # Номер кадра
         self.image = enemyARun[self.cur_frame]  # Изображение спрайта
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(self.pos_x, self.pos_y + 20)
+        self.rect = self.rect.move(self.pos_x, self.pos_y + 15)
 
-    def run(self, keys):  # Бег
-        global direction
+    def run(self):  # Бег
         if pers.pos_x < self.pos_x:
             self.frames = enemyARunLeft
-            self.num_wait = waitRunEnemyA
             self.rect.x = self.pos_x  # Выравнивание анимации
             self.pos_x -= 6  # Смещение влево
-            direction = True  # Персонаж смотрит влево
+            self.direction = True  # Персонаж смотрит влево
         elif pers.pos_x > self.pos_x:
             self.frames = enemyARun
-            self.num_wait = waitRunEnemyA
             self.pos_x += 6  # Смещение вправо
-            direction = False  # Персонаж смотрит вправо
+            self.direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
 
+    def kick(self):
+        if self.direction:
+            self.frames = enemyAKickLeft
+        else:
+            self.frames = enemyAKick
+        pers.hp -= 10
+
     def jump(self):  # Прыжок
-        if direction:
+        if self.direction:
             self.frames = enemyAJumpLeft[:1]
-            self.num_wait = waitJumpEnemyA[:1]
         else:
             self.frames = enemyAJump[:1]
-            self.num_wait = waitJumpEnemyA[:1]
         if self.jump_count > 0:
-            if direction:
+            if self.direction:
                 self.frames = enemyAJumpLeft[2:3]
-                self.num_wait = waitJumpEnemyA[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-                self.num_wait = waitJumpEnemyA[2:3]
             self.rect.y -= self.jump_count ** 2 / 2
             self.jump_count -= 1
         else:
-            if direction:
+            if self.direction:
                 self.frames = enemyAJumpLeft[2:3]
-                self.num_wait = waitJumpEnemyA[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-                self.num_wait = waitJumpEnemyA[2:3]
             self.rect.y += self.jump_count ** 2 / 2
             self.jump_count -= 1
         if self.jump_count == -10:
-            if direction:
+            if self.direction:
                 self.frames = enemyAJumpLeft[4:]
-                self.num_wait = waitJumpEnemyA[4:]
             else:
                 self.frames = enemyAJump[4:]
-                self.num_wait = waitJumpEnemyA[4:]
             self.if_jump = False
             self.re20 = True
             self.rect.y += 55
 
-    def wait(self):  # Задержка
-        pygame.time.wait(self.num_wait[self.cur_frame - 1])
-
     def update(self):
-        running = False
-        keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
+        if self.hp <= 0:
+            self.kill()
         if abs(self.pos_x - pers.pos_x) > 70:  # Персонаж вне зоны досягаемости
-            self.run(keys)
-            running = True
+            self.run()
         if not self.if_jump:
-            if - pers.rect.y + self.rect.y > 100:  # Нажат прыжок
+            if abs(self.pos_x - pers.pos_x) <= 70 and - pers.rect.y + self.rect.y <= 150:  # Нажатие клавиши "h" для стрельбы
+                self.kick()
+            elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
                 print(1)
-            #elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
-                #self.fire()
         else:
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        #self.wait()
         self.image = self.frames[self.cur_frame - 1]
+        if len(pygame.sprite.spritecollide(self, bullet_sprites, False)) >= 1:
+            self.hp -= 10
 
 
 class Tile(pygame.sprite.Sprite):
@@ -373,8 +354,8 @@ tile_width = 105
 tile_height = 21
 
 pers = Person(505, 505)  # Начальное положение персонажа
-enem = EnemyA(400, 505)
-enem1 = EnemyA(300, 505)
+enem = EnemyA(600, 505)
+enem1 = EnemyA(50, 505)
 
 
 def main():  # главная функция
