@@ -16,6 +16,9 @@ waitRun = [100, 100, 100]  # Набегу
 waitJump = [100, 100, 100, 100, 100, 100]  # В прыжке
 waitFire = [100, 100, 100, 100, 100, 100, 100, 100, 100]
 
+waitRunEnemyA = [100, 100, 100, 100, 100]
+waitJumpEnemyA = [100, 100, 100, 100, 100]
+
 personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
              LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
@@ -113,21 +116,21 @@ class Person(pygame.sprite.Sprite):
         self.num_wait = waitStop  # Задержки в анимации
         self.image = personStop[self.cur_frame]  # Изображение спрайта
         self.rect = self.image.get_rect()
-        self.rect = self.rect.move(self.pos_x, self.pos_y)  # Смещение в точку нахождения пули
+        self.rect = self.rect.move(self.pos_x, self.pos_y)
 
     def run(self, keys):  # Бег
         global direction
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
             self.num_wait = waitRun
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
             self.pos_x -= 8  # Смещение влево
-            direction = True  # Персонаж смотрит влево
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            direction = False  # Персонаж смотрит вправо
             self.frames = personRun
             self.num_wait = waitRun
             self.pos_x += 8  # Смещение вправо
-            direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
 
     def stop(self):  # Отсутствие движения
@@ -212,7 +215,7 @@ class Person(pygame.sprite.Sprite):
         else:
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        self.wait()
+        #self.wait()
         self.image = self.frames[self.cur_frame - 1]
 
 
@@ -238,6 +241,95 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
             else:
                 self.kill()  # Уничтожение пуль вышедших за границы экрана
 
+
+class EnemyA(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__(all_sprites)
+        # Начальные координаты персонажа
+        self.pos_x = x
+        self.pos_y = y
+        self.if_jump = False
+        self.frames = enemyARun  # Анимация стоя
+        self.num_wait = waitRunEnemyA
+        self.cur_frame = 0  # Номер кадра
+        self.image = enemyARun[self.cur_frame]  # Изображение спрайта
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(self.pos_x, self.pos_y + 20)
+
+    def run(self, keys):  # Бег
+        global direction
+        if pers.pos_x < self.pos_x:
+            self.frames = enemyARunLeft
+            self.num_wait = waitRunEnemyA
+            self.rect.x = self.pos_x  # Выравнивание анимации
+            self.pos_x -= 6  # Смещение влево
+            direction = True  # Персонаж смотрит влево
+        elif pers.pos_x > self.pos_x:
+            self.frames = enemyARun
+            self.num_wait = waitRunEnemyA
+            self.pos_x += 6  # Смещение вправо
+            direction = False  # Персонаж смотрит вправо
+        self.rect.x = self.pos_x
+
+    def jump(self):  # Прыжок
+        if direction:
+            self.frames = enemyAJumpLeft[:1]
+            self.num_wait = waitJumpEnemyA[:1]
+        else:
+            self.frames = enemyAJump[:1]
+            self.num_wait = waitJumpEnemyA[:1]
+        if self.jump_count > 0:
+            if direction:
+                self.frames = enemyAJumpLeft[2:3]
+                self.num_wait = waitJumpEnemyA[2:3]
+            else:
+                self.frames = enemyAJump[2:3]
+                self.num_wait = waitJumpEnemyA[2:3]
+            self.rect.y -= self.jump_count ** 2 / 2
+            self.jump_count -= 1
+        else:
+            if direction:
+                self.frames = enemyAJumpLeft[2:3]
+                self.num_wait = waitJumpEnemyA[2:3]
+            else:
+                self.frames = enemyAJump[2:3]
+                self.num_wait = waitJumpEnemyA[2:3]
+            self.rect.y += self.jump_count ** 2 / 2
+            self.jump_count -= 1
+        if self.jump_count == -10:
+            if direction:
+                self.frames = enemyAJumpLeft[4:]
+                self.num_wait = waitJumpEnemyA[4:]
+            else:
+                self.frames = enemyAJump[4:]
+                self.num_wait = waitJumpEnemyA[4:]
+            self.if_jump = False
+            self.re20 = True
+            self.rect.y += 55
+
+    def wait(self):  # Задержка
+        pygame.time.wait(self.num_wait[self.cur_frame - 1])
+
+    def update(self):
+        running = False
+        keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
+        if abs(self.pos_x - pers.pos_x) > 70:  # Персонаж вне зоны досягаемости
+            self.run(keys)
+            running = True
+        if not self.if_jump:
+            if - pers.rect.y + self.rect.y > 100:  # Нажат прыжок
+                self.if_jump = True
+                self.jump_count = 10
+                print(1)
+            #elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
+                #self.fire()
+        else:
+            self.jump()
+        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        #self.wait()
+        self.image = self.frames[self.cur_frame - 1]
+
+
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(tile_sprites, all_sprites)
@@ -277,51 +369,12 @@ tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
                'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
                'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
 
-tile_width = 105
-tile_height = 21
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, tile_type, pos_x, pos_y):
-        super().__init__(tile_sprites, all_sprites)
-        self.image = tile_images[tile_type]
-        self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
-
-
-class Platforms(pygame.sprite.Sprite):
-    def load_level(filename):
-        filename = "data/" + filename
-        # читаем уровень, убирая символы перевода строки
-        with open(filename, 'r') as mapFile:
-            level_map = [line.strip() for line in mapFile]
-
-        # и подсчитываем максимальную длину
-        max_width = max(map(len, level_map))
-
-        # дополняем каждую строку пустыми клетками ('.')
-        return list(map(lambda x: x.ljust(max_width, '.'), level_map))
-
-    def generate_level(level):
-        new_player, x, y = None, None, None
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                if level[y][x] == '#':
-                    Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
-                elif level[y][x] == '@':
-                    Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
-        # вернем размер поля в клетках
-        return x, y
-
-
-tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
-               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
-               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
-               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
-               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
-               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
 tile_width = 105
 tile_height = 21
 
 pers = Person(505, 505)  # Начальное положение персонажа
+enem = EnemyA(400, 505)
+enem1 = EnemyA(300, 505)
 
 
 def main():  # главная функция
@@ -336,7 +389,7 @@ def main():  # главная функция
         all_sprites.draw(screen)  # Отображение всех спрайтов
         all_sprites.update()  # Обновление спрайтов
         clock.tick(60)
-        pygame.time.delay(10)
+        pygame.time.delay(100)
         pygame.display.flip()
 
 
