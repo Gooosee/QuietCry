@@ -287,14 +287,23 @@ class EnemyA(pygame.sprite.Sprite):
                 self.frames = enemyAJumpLeft[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-            self.rect.y -= self.jump_count ** 2 / 2
+            if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             self.rect[1] // 21) or \
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105, self.rect[1] // 21)):
+                self.rect.y -= self.jump_count ** 2 / 2
             self.jump_count -= 1
         else:
             if self.direction:
                 self.frames = enemyAJumpLeft[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-            self.rect.y += self.jump_count ** 2 / 2
+            if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             ((self.rect[1] + self.rect[3]) // 21)) or \
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105,
+                                             ((self.rect[1] + self.rect[3]) // 21))):
+                self.rect.y += self.jump_count ** 2 / 2
             self.jump_count -= 1
         if self.jump_count == -10:
             if self.direction:
@@ -369,7 +378,7 @@ tile_width = 105
 tile_height = 21  # размер клетки
 
 pers = Person(505, 505)  # Начальное положение персонажа
-enem = EnemyA(800, 505)
+#enem = EnemyA(800, 505)
 enem1 = EnemyA(50, 505)
 
 
