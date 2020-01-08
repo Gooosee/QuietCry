@@ -378,7 +378,7 @@ tile_width = 105
 tile_height = 21  # размер клетки
 
 pers = Person(505, 505)  # Начальное положение персонажа
-#enem = EnemyA(800, 505)
+enem = EnemyA(800, 505)
 enem1 = EnemyA(50, 505)
 
 
