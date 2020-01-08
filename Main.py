@@ -1,5 +1,3 @@
-from random import choice
-
 import pygame
 from random import choice
 import LoadImage
@@ -155,14 +153,23 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJumpLeft[2:3]
             else:
                 self.frames = personJump[2:3]
-            self.rect.y -= self.jump_count ** 2 / 2
+            if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                        self.rect[1] // 21) or\
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105, self.rect[1] // 21)):
+                self.rect.y -= self.jump_count ** 2 / 2
             self.jump_count -= 1
         else:
             if self.direction:
                 self.frames = personJumpLeft[3:4]
             else:
                 self.frames = personJump[3:4]
-            self.rect.y += self.jump_count ** 2 / 2
+            if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                            ((self.rect[1] + self.rect[3]) // 21) - self.jump_count // 2) or \
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105,
+                                             ((self.rect[1] + self.rect[3]) // 21) - self.jump_count // 2)):
+                self.rect.y += self.jump_count ** 2 / 2
             self.jump_count -= 1
         if self.jump_count == -10:
             if self.direction:
@@ -171,7 +178,7 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJump[5:]
             self.if_jump = False
             self.re20 = True
-            self.rect.y += 20
+            self.rect.y += 40
 
     def fire(self):  # Стрельба
         if self.direction:
@@ -199,7 +206,7 @@ class Person(pygame.sprite.Sprite):
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
-                self.rect.y -= 20
+                self.rect.y -= 40
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
 
@@ -209,14 +216,6 @@ class Person(pygame.sprite.Sprite):
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
-        if Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, self.rect[1] // 21)\
-                or Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                            (self.rect[0] + self.rect[2]) // 105, self.rect[1] // 21) or \
-                Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                         self.rect[0] // 105, (self.rect[1] + self.rect[3]) // 21) or\
-                Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + self.rect[2]) // 105,
-                                         (self.rect[1] + self.rect[3]) // 21):
-            pass
 
 
 class Bullet(pygame.sprite.Sprite):  # Класс пуль
@@ -370,7 +369,7 @@ tile_width = 105
 tile_height = 21  # размер клетки
 
 pers = Person(505, 505)  # Начальное положение персонажа
-enem = EnemyA(600, 505)
+enem = EnemyA(800, 505)
 enem1 = EnemyA(50, 505)
 
 
