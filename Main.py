@@ -209,6 +209,14 @@ class Person(pygame.sprite.Sprite):
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
+        if Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, self.rect[1] // 21)\
+                or Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                            (self.rect[0] + self.rect[2]) // 105, self.rect[1] // 21) or \
+                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                         self.rect[0] // 105, (self.rect[1] + self.rect[3]) // 21) or\
+                Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + self.rect[2]) // 105,
+                                         (self.rect[1] + self.rect[3]) // 21):
+            pass
 
 
 class Bullet(pygame.sprite.Sprite):  # Класс пуль
@@ -309,7 +317,6 @@ class EnemyA(pygame.sprite.Sprite):
             elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
-                print(1)
         else:
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -338,16 +345,25 @@ class Platforms(pygame.sprite.Sprite):
         # дополняем каждую строку пустыми клетками ('.')
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
-    def generate_level(level):
-        x, y = None, None
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                if level[y][x] == '#':
-                    Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
-                elif level[y][x] == '@':
-                    Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
-        # вернем размер поля в клетках
-        return x, y
+    def generate_level(level, x=None, y=None):
+        if x == None and y == None:  # отрисовка уровня
+            for y in range(len(level)):
+                for x in range(len(level[y])):
+                    if level[y][x] == '#':
+                        Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
+                    elif level[y][x] == '@':
+                        Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
+            # вернем размер поля в клетках
+            return x, y
+        else:  # проверка наличия тайла
+            if x > 7:
+                x = 7
+            if y > 39:
+                y = 39
+            if level[y][x] == '#' or level[y][x] == '@':
+                return True
+            else:
+                return False
 
 
 tile_width = 105
