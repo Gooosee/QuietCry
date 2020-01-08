@@ -96,6 +96,13 @@ enemyAKickLeft = [pygame.transform.flip(enemyAKick[0], True, False),
                   pygame.transform.flip(enemyAKick[2], True, False),
                   pygame.transform.flip(enemyAKick[3], True, False)]
 
+tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
+               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
+               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
+               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
+               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
+               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
+
 bull = LoadImage.load_image('bullet.png', 'data')
 person_sprites = pygame.sprite.GroupSingle()
 all_sprites = pygame.sprite.Group()
@@ -332,7 +339,7 @@ class Platforms(pygame.sprite.Sprite):
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
     def generate_level(level):
-        new_player, x, y = None, None, None
+        x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if level[y][x] == '#':
@@ -343,15 +350,8 @@ class Platforms(pygame.sprite.Sprite):
         return x, y
 
 
-tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
-               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
-               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
-               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
-               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
-               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
-
 tile_width = 105
-tile_height = 21
+tile_height = 21  # размер клетки
 
 pers = Person(505, 505)  # Начальное положение персонажа
 enem = EnemyA(600, 505)
