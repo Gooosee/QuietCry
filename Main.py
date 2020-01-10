@@ -154,31 +154,29 @@ class Person(pygame.sprite.Sprite):
             else:
                 self.frames = personJump[2:3]
             if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                        self.rect[1] // 21) or\
+                                            (self.rect[1] // 21) - 1) or\
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105, self.rect[1] // 21)):
-                self.rect.y -= self.jump_count ** 2 / 2
-            self.jump_count -= 1
+                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21) - 1)):
+                self.rect.y -= self.jump_count ** 2 // 2
+                self.jump_count -= 1
+            else:
+                self.jump_count -= 1
+                self.jump_count *= -1
         else:
             if self.direction:
                 self.frames = personJumpLeft[3:4]
             else:
                 self.frames = personJump[3:4]
-            if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                            ((self.rect[1] + self.rect[3]) // 21) - self.jump_count // 2) or \
-                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105,
-                                             ((self.rect[1] + self.rect[3]) // 21) - self.jump_count // 2)):
-                self.rect.y += self.jump_count ** 2 / 2
+            self.rect.y += self.jump_count ** 2 // 2
             self.jump_count -= 1
-        if self.jump_count == -10:
+        if self.jump_count == -9:
             if self.direction:
                 self.frames = personJumpLeft[5:]
             else:
                 self.frames = personJump[5:]
             self.if_jump = False
             self.re20 = True
-            self.rect.y += 40
+            self.rect.y += 33
 
     def fire(self):  # Стрельба
         if self.direction:
@@ -358,7 +356,7 @@ class Platforms(pygame.sprite.Sprite):
             for y in range(len(level)):
                 for x in range(len(level[y])):
                     if level[y][x] == '#':
-                        Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
+                        Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
                     elif level[y][x] == '@':
                         Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
             # вернем размер поля в клетках
