@@ -115,7 +115,9 @@ class Person(pygame.sprite.Sprite):
         # Начальные координаты персонажа
         self.pos_x = x
         self.hp = 150
+        self.jump_count = 10
         self.re20 = False
+        self.vzaim = True  # взаимодействие
         self.pos_y = y
         self.if_jump = False
         self.direction = False
@@ -169,7 +171,9 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJump[3:4]
             self.rect.y += self.jump_count ** 2 // 2
             self.jump_count -= 1
-        if self.jump_count == -9:
+        if self.jump_count == 0:
+            self.vzaim = False
+        if self.jump_count == -9 and self.vzaim:
             if self.direction:
                 self.frames = personJumpLeft[5:]
             else:
@@ -177,6 +181,14 @@ class Person(pygame.sprite.Sprite):
             self.if_jump = False
             self.re20 = True
             self.rect.y += 33
+        if self.jump_count == -10:
+            if self.direction:
+                self.frames = personJumpLeft[5:]
+            else:
+                self.frames = personJump[5:]
+            self.if_jump = False
+            self.re20 = True
+            self.rect.y += 35
 
     def fire(self):  # Стрельба
         if self.direction:
@@ -203,6 +215,7 @@ class Person(pygame.sprite.Sprite):
         if not self.if_jump:
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
+                self.vzaim = True
                 self.jump_count = 10
                 self.rect.y -= 40
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
@@ -376,8 +389,8 @@ tile_width = 105
 tile_height = 21  # размер клетки
 
 pers = Person(505, 505)  # Начальное положение персонажа
-enem = EnemyA(800, 505)
-enem1 = EnemyA(50, 505)
+#enem = EnemyA(800, 505)
+#enem1 = EnemyA(50, 505)
 
 
 def main():  # главная функция
