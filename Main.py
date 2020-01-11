@@ -156,13 +156,13 @@ class Person(pygame.sprite.Sprite):
             else:
                 self.frames = personJump[2:3]
             if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                            (self.rect[1] // 21) - 1) or\
+                                            (self.rect[1] // 21)) or\
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21) - 1)):
+                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
                 self.rect.y -= self.jump_count ** 2 // 2
                 self.jump_count -= 1
             else:
-                self.jump_count -= 1
+                self.jump_count += 1
                 self.jump_count *= -1
         else:
             if self.direction:
@@ -173,14 +173,6 @@ class Person(pygame.sprite.Sprite):
             self.jump_count -= 1
         if self.jump_count == 0:
             self.vzaim = False
-        if self.jump_count == -9 and self.vzaim:
-            if self.direction:
-                self.frames = personJumpLeft[5:]
-            else:
-                self.frames = personJump[5:]
-            self.if_jump = False
-            self.re20 = True
-            self.rect.y += 33
         if self.jump_count == -10:
             if self.direction:
                 self.frames = personJumpLeft[5:]
