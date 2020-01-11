@@ -385,7 +385,7 @@ class Platforms(pygame.sprite.Sprite):
             for y in range(len(level)):
                 for x in range(len(level[y])):
                     if level[y][x] == '#':
-                        Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
+                        Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
                     elif level[y][x] == '@':
                         Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
             # вернем размер поля в клетках
