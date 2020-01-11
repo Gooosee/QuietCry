@@ -131,11 +131,39 @@ class Person(pygame.sprite.Sprite):
             self.direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 10  # Смещение влево
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                         (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not(self.if_jump)):
+                self.pos_x -= 10  # Смещение влево
+            elif self.if_jump:
+                self.pos_x -= 10
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 4) * 21
+                        break
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction = False  # Персонаж смотрит вправо
             self.frames = personRun
-            self.pos_x += 10  # Смещение вправо
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                         (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not(self.if_jump)):
+                self.pos_x += 10  # Смещение вправо
+            elif self.if_jump:
+                self.pos_x += 10
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 4) * 21
+                        break
         self.rect.x = self.pos_x
 
     def stop(self):  # Отсутствие движения
@@ -155,8 +183,8 @@ class Person(pygame.sprite.Sprite):
             else:
                 self.frames = personJump[2:3]
             if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                            (self.rect[1] // 21)) or\
-                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                            (self.rect[1] // 21)) or
+                   Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
                 self.rect.y -= self.jump_count ** 2 // 2
                 self.jump_count -= 1
@@ -204,7 +232,6 @@ class Person(pygame.sprite.Sprite):
         if not self.if_jump:
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
-                self.vzaim = True
                 self.jump_count = 10
                 self.rect.y -= 40
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
@@ -377,7 +404,7 @@ class Platforms(pygame.sprite.Sprite):
 tile_width = 105
 tile_height = 21  # размер клетки
 
-pers = Person(505, 505)  # Начальное положение персонажа
+pers = Person(305, 105)  # Начальное положение персонажа
 #enem = EnemyA(800, 505)
 #enem1 = EnemyA(50, 505)
 
