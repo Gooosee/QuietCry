@@ -117,7 +117,6 @@ class Person(pygame.sprite.Sprite):
         self.hp = 150
         self.jump_count = 10
         self.re20 = False
-        self.vzaim = True  # взаимодействие
         self.pos_y = y
         self.if_jump = False
         self.direction = False
@@ -171,8 +170,6 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJump[3:4]
             self.rect.y += self.jump_count ** 2 // 2
             self.jump_count -= 1
-        if self.jump_count == 0:
-            self.vzaim = False
         if self.jump_count == -10:
             if self.direction:
                 self.frames = personJumpLeft[5:]
