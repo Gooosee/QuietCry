@@ -118,6 +118,7 @@ class Person(pygame.sprite.Sprite):
         self.jump_count = 10
         self.re20 = False
         self.pos_y = y
+        self.landing = 505  # координата приземления при запрыгивание на платформу
         self.if_jump = False
         self.direction = False
         self.cur_frame = 0  # Номер кадра
@@ -185,7 +186,7 @@ class Person(pygame.sprite.Sprite):
             if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                             (self.rect[1] // 21)) or
                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
+                                            (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
                 self.rect.y -= self.jump_count ** 2 // 2
                 self.jump_count -= 1
             else:
@@ -196,7 +197,16 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJumpLeft[3:4]
             else:
                 self.frames = personJump[3:4]
-            self.rect.y += self.jump_count ** 2 // 2
+            for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105, i)):
+                    self.landing = (i - 8) * 21 - 6
+                    break
+            if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
+                self.rect.y += self.jump_count ** 2 // 2
+            else:
+                self.rect.y = self.landing
             self.jump_count -= 1
         if self.jump_count == -10:
             if self.direction:
@@ -232,6 +242,7 @@ class Person(pygame.sprite.Sprite):
         if not self.if_jump:
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
+                self.landing = 505
                 self.jump_count = 10
                 self.rect.y -= 40
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
@@ -405,8 +416,8 @@ tile_width = 105
 tile_height = 21  # размер клетки
 
 pers = Person(305, 105)  # Начальное положение персонажа
-#enem = EnemyA(800, 505)
-#enem1 = EnemyA(50, 505)
+enem = EnemyA(800, 505)
+enem1 = EnemyA(50, 505)
 
 
 def main():  # главная функция
