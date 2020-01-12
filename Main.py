@@ -1,5 +1,3 @@
-from random import choice
-
 import pygame
 from random import choice
 import LoadImage
@@ -96,6 +94,13 @@ enemyAKickLeft = [pygame.transform.flip(enemyAKick[0], True, False),
                   pygame.transform.flip(enemyAKick[2], True, False),
                   pygame.transform.flip(enemyAKick[3], True, False)]
 
+tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
+               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
+               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
+               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
+               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
+               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
+
 bull = LoadImage.load_image('bullet.png', 'data')
 person_sprites = pygame.sprite.GroupSingle()
 all_sprites = pygame.sprite.Group()
@@ -110,8 +115,10 @@ class Person(pygame.sprite.Sprite):
         # Начальные координаты персонажа
         self.pos_x = x
         self.hp = 150
+        self.jump_count = 10
         self.re20 = False
         self.pos_y = y
+        self.landing = 505  # координата приземления при запрыгивание на платформу
         self.if_jump = False
         self.direction = False
         self.cur_frame = 0  # Номер кадра
@@ -125,12 +132,41 @@ class Person(pygame.sprite.Sprite):
             self.direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
             self.rect.x = self.pos_x - 40  # Выравнивание анимации
-            self.pos_x -= 10  # Смещение влево
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                         (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not(self.if_jump)):
+                self.pos_x -= 10  # Смещение влево
+            elif self.if_jump:
+                self.pos_x -= 10
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 4) * 21
+                        break
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction = False  # Персонаж смотрит вправо
             self.frames = personRun
-            self.pos_x += 10  # Смещение вправо
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                         (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not(self.if_jump)):
+                self.pos_x += 10  # Смещение вправо
+            elif self.if_jump:
+                self.pos_x += 10
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 4) * 21
+                        break
         self.rect.x = self.pos_x
+        self.pos_y = self.rect.y
 
     def stop(self):  # Отсутствие движения
         if self.direction:
@@ -148,14 +184,30 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJumpLeft[2:3]
             else:
                 self.frames = personJump[2:3]
-            self.rect.y -= self.jump_count ** 2 / 2
-            self.jump_count -= 1
+            if not(Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                            (self.rect[1] // 21)) or
+                   Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                            (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
+                self.rect.y -= self.jump_count ** 2 // 2
+                self.jump_count -= 1
+            else:
+                self.jump_count += 1
+                self.jump_count *= -1
         else:
             if self.direction:
                 self.frames = personJumpLeft[3:4]
             else:
                 self.frames = personJump[3:4]
-            self.rect.y += self.jump_count ** 2 / 2
+            for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105, i)):
+                    self.landing = (i - 8) * 21 - 6
+                    break
+            if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
+                self.rect.y += self.jump_count ** 2 // 2
+            else:
+                self.rect.y = self.landing
             self.jump_count -= 1
         if self.jump_count == -10:
             if self.direction:
@@ -164,7 +216,7 @@ class Person(pygame.sprite.Sprite):
                 self.frames = personJump[5:]
             self.if_jump = False
             self.re20 = True
-            self.rect.y += 20
+            self.rect.y += 35
 
     def fire(self):  # Стрельба
         if self.direction:
@@ -191,8 +243,9 @@ class Person(pygame.sprite.Sprite):
         if not self.if_jump:
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                 self.if_jump = True
+                self.landing = 505
                 self.jump_count = 10
-                self.rect.y -= 20
+                self.rect.y -= 40
             elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
 
@@ -248,13 +301,42 @@ class EnemyA(pygame.sprite.Sprite):
         if pers.pos_x < self.pos_x:
             self.frames = enemyARunLeft
             self.rect.x = self.pos_x  # Выравнивание анимации
-            self.pos_x -= 6  # Смещение влево
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not (self.if_jump)):
+                self.pos_x -= 6  # Смещение влево
+            elif self.if_jump:
+                self.pos_x -= 6
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 4) * 21
+                        break  # Смещение влево
             self.direction = True  # Персонаж смотрит влево
         elif pers.pos_x > self.pos_x:
             self.frames = enemyARun
-            self.pos_x += 6  # Смещение вправо
-            self.direction = False  # Персонаж смотрит вправо
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                         (self.rect[1] + self.rect[3]) // 21) or
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                    and not (self.if_jump)):
+                self.pos_x += 6  # Смещение вправо
+            elif self.if_jump:
+                self.pos_x += 6
+            else:
+                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                            Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + self.rect[2]) // 105, i)):
+                        self.rect.y = (i - 3) * 21
+                        break
+        self.direction = False  # Персонаж смотрит вправо
         self.rect.x = self.pos_x
+        self.pos_y = self.rect.y
 
     def kick(self):
         if self.direction:
@@ -273,14 +355,30 @@ class EnemyA(pygame.sprite.Sprite):
                 self.frames = enemyAJumpLeft[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-            self.rect.y -= self.jump_count ** 2 / 2
-            self.jump_count -= 1
+            if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             (self.rect[1] // 21)) or
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
+                self.rect.y -= self.jump_count ** 2 // 2
+                self.jump_count -= 1
+            else:
+                self.jump_count += 1
+                self.jump_count *= -1
         else:
             if self.direction:
                 self.frames = enemyAJumpLeft[2:3]
             else:
                 self.frames = enemyAJump[2:3]
-            self.rect.y += self.jump_count ** 2 / 2
+            for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105, i)):
+                    self.landing = (i - 8) * 21 - 6
+                    break
+            if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
+                self.rect.y += self.jump_count ** 2 // 2
+            else:
+                self.rect.y = self.landing
             self.jump_count -= 1
         if self.jump_count == -10:
             if self.direction:
@@ -289,7 +387,7 @@ class EnemyA(pygame.sprite.Sprite):
                 self.frames = enemyAJump[4:]
             self.if_jump = False
             self.re20 = True
-            self.rect.y += 55
+            self.rect.y += 105
 
     def update(self):
         if self.hp <= 0:
@@ -297,12 +395,11 @@ class EnemyA(pygame.sprite.Sprite):
         if abs(self.pos_x - pers.pos_x) > 70:  # Персонаж вне зоны досягаемости
             self.run()
         if not self.if_jump:
-            if abs(self.pos_x - pers.pos_x) <= 70 and - pers.rect.y + self.rect.y <= 150:  # Нажатие клавиши "h" для стрельбы
+            if abs(self.pos_x - pers.pos_x) <= 70 and abs(- pers.rect.y + self.rect.y) <= 50:  # Нажатие клавиши "h" для стрельбы
                 self.kick()
             elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                 self.if_jump = True
                 self.jump_count = 10
-                print(1)
         else:
             self.jump()
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -331,31 +428,33 @@ class Platforms(pygame.sprite.Sprite):
         # дополняем каждую строку пустыми клетками ('.')
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
-    def generate_level(level):
-        new_player, x, y = None, None, None
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                if level[y][x] == '#':
-                    Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
-                elif level[y][x] == '@':
-                    Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
-        # вернем размер поля в клетках
-        return x, y
+    def generate_level(level, x=None, y=None):
+        if x == None and y == None:  # отрисовка уровня
+            for y in range(len(level)):
+                for x in range(len(level[y])):
+                    if level[y][x] == '#':
+                        Tile(choice(['plat_u1', 'plat_u2', 'plat_u3']), x, y)
+                    elif level[y][x] == '@':
+                        Tile(choice(['plat_d1', 'plat_d2', 'plat_d3']), x, y)
+            # вернем размер поля в клетках
+            return x, y
+        else:  # проверка наличия тайла
+            if x > 7:
+                x = 7
+            if y > 39:
+                y = 39
+            if level[y][x] == '#' or level[y][x] == '@':
+                return True
+            else:
+                return False
 
-
-tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
-               'plat_d2': LoadImage.load_image('plat_down2.png', 'data'),
-               'plat_d3': LoadImage.load_image('plat_down3.png', 'data'),
-               'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
-               'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
-               'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
 
 tile_width = 105
-tile_height = 21
+tile_height = 21  # размер клетки
 
-pers = Person(505, 505)  # Начальное положение персонажа
-enem = EnemyA(600, 505)
-enem1 = EnemyA(50, 505)
+pers = Person(305, 505)  # Начальное положение персонажа
+enem = EnemyA(300, 105)
+#enem1 = EnemyA(50, 505)
 
 
 def main():  # главная функция
