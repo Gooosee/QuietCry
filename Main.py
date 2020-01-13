@@ -1,14 +1,22 @@
 import pygame
 from random import choice
 import LoadImage
-
-
-def main():
+time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+dead = False
+f = False
+person_sprites = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+tile_sprites = pygame.sprite.Group()
+bullet_sprites = pygame.sprite.Group()
+enemy_sprites = pygame.sprite.Group()
+wave_count = 0  # Номер волны
+def startGame():
     pygame.init()
     # создание окна
     size = width, height = 840, 840
     screen = pygame.display.set_mode(size)
-    f = False
+
+
 
     personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
                  LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
@@ -104,11 +112,6 @@ def main():
                    'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
 
     bull = LoadImage.load_image('bullet.png', 'data')
-    person_sprites = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    tile_sprites = pygame.sprite.Group()
-    bullet_sprites = pygame.sprite.Group()
-    enemy_sprites = pygame.sprite.Group()
 
 
     def start_screen():
@@ -151,9 +154,7 @@ def main():
             pygame.display.flip()
             pygame.time.Clock().tick(5)
 
-
     start_screen()
-
 
     class Person(pygame.sprite.Sprite):
         def __init__(self, x, y):
@@ -182,7 +183,8 @@ def main():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
                     self.rect.x -= 10  # Смещение влево
                 elif self.if_jump:
@@ -200,7 +202,8 @@ def main():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
                     self.rect.x += 10  # Смещение вправо
                 elif self.if_jump:
@@ -281,7 +284,8 @@ def main():
             if self.re20:
                 self.rect.y += 55
                 self.re20 = False
-            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d]:  # Нажаты клавиши для
+            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[
+                pygame.K_d]:  # Нажаты клавиши для
                 # бега
                 self.run(keys)
                 if self.direction:
@@ -306,7 +310,6 @@ def main():
 
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame - 1]
-
 
     class Bullet(pygame.sprite.Sprite):  # Класс пуль
         def __init__(self, x, y, direction_bul):
@@ -334,7 +337,6 @@ def main():
                 self.kill()
             f = False
 
-
     class EnemyA(pygame.sprite.Sprite):
         def __init__(self, x, y):
             super().__init__(enemy_sprites)
@@ -354,11 +356,12 @@ def main():
         def run(self):  # Бег
             if pers.rect.x < self.rect.x:
                 self.frames = enemyARunLeft
-                #self.rect.x = self.pos_x  # Выравнивание анимации
+                # self.rect.x = self.pos_x  # Выравнивание анимации
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
                     pass
                 else:
@@ -375,7 +378,8 @@ def main():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
                     self.rect.x += 6  # Смещение вправо
                 elif self.if_jump:
@@ -449,7 +453,7 @@ def main():
                 self.running = True  # Враг бежит
             if not self.if_jump:
                 if abs(self.rect.x - pers.rect.x) <= 70 and abs(
-                        - pers.rect.y + self.rect.y) <= 50 and not(self.running):  #
+                        - pers.rect.y + self.rect.y) <= 50 and not (self.running):  #
                     self.kick()
                 elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                     self.if_jump = True
@@ -462,9 +466,6 @@ def main():
             self.cur_frame = (self.cur_frame + 1) % len(self.frames)
             self.image = self.frames[self.cur_frame - 1]
             self.running = False  # Враг стоит
-
-
-    wave_count = 0  # Номер волны
 
 
     def wave(i):
@@ -485,13 +486,11 @@ def main():
                 en = EnemyA(840, -10 - yyr)
                 yyr += 40
 
-
     class Tile(pygame.sprite.Sprite):
         def __init__(self, tile_type, pos_x, pos_y):
             super().__init__(tile_sprites, all_sprites)
             self.image = tile_images[tile_type]
             self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
-
 
     class Platforms(pygame.sprite.Sprite):
         def load_level(filename):
@@ -527,21 +526,21 @@ def main():
                     return False
 
 
-    time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     tile_width = 105
     tile_height = 21  # размер клетки
-    dead = False
+
     pers = Person(305, 670)  # Начальное положение персонажа
-    ii = 0
 
 
     def main():  # главная функция
-        global ii
+        global time_wave
         level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
         clock = pygame.time.Clock()
         pygame.time.set_timer(pygame.USEREVENT, 1000)
         i = 0
+        ii = 0
         running = True
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -566,6 +565,7 @@ def main():
 
             fon = LoadImage.load_image('fon1.png', 'data')
             if not dead:
+                print(1)
                 screen.blit(fon, [0, -80, 840, 840])
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
@@ -584,7 +584,7 @@ def main():
                     person_sprites.draw(screen)
                     bullet_sprites.draw(screen)
                     tile_sprites.draw(screen)
-                    enemy_sprites.draw(screen)   # Отображение всех спрайтов
+                    enemy_sprites.draw(screen)  # Отображение всех спрайтов
                     person_sprites.update()
                     bullet_sprites.update()
                     enemy_sprites.update()  #
@@ -602,7 +602,4 @@ def main():
             pygame.time.delay(50)
             pygame.display.flip()
 
-
-    # запуск главной функции
     main()
-    quit()
