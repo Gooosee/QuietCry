@@ -1,5 +1,4 @@
 import sys
-
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 from PyQt5 import uic
 import sqlite3
@@ -10,8 +9,6 @@ class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('menu.ui', self)
-        self.winPlay = Main
-
         self.pb1.clicked.connect(self.start)
         self.pb2.clicked.connect(self.table)
         self.pb3.clicked.connect(self.quit)
@@ -19,8 +16,7 @@ class MyWidget(QMainWindow):
         self.cur = self.con.cursor()
 
     def start(self):
-        self.winPlay.startGame()
-        print(self.winPlay.start_game)
+        Main.main()
 
     def table(self):
         pass
