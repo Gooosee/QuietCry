@@ -555,7 +555,6 @@ def main():  # главная функция
                     global pers
                     if dead:
                         dead = False
-                        print(1)
                         for y in enemy_sprites:
                             enemy_sprites.remove(y)
                         pers = Person(305, 670)  # Начальное положение персонажа
@@ -571,10 +570,7 @@ def main():  # главная функция
             enemy_sprites.draw(screen)  # Отображение всех спрайтов
             person_sprites.update()
             bullet_sprites.update()
-            enemy_sprites.update()  #
-        else:
-            print(1)
-
+            enemy_sprites.update()
             if ii == 0:
                 ii = i
             elif i - ii < 3:
@@ -585,13 +581,13 @@ def main():  # главная функция
                 enemy_sprites.draw(screen)   # Отображение всех спрайтов
                 person_sprites.update()
                 bullet_sprites.update()
-                enemy_sprites.update()  #
+                enemy_sprites.update()
             else:
                 screen.blit(fon, [0, 0, 840, 840])
                 font = pygame.font.Font(None, 80)
                 text1 = font.render("Умер насмерть(", True, [100, 0, 0])
                 font = pygame.font.Font(None, 40)
-                text2 = font.render("Чтобы начать заного нажмите \"пробел\"", True, [100, 100, 100])
+                text2 = font.render("Чтобы начать заново нажмите \"пробел\"", True, [100, 100, 100])
                 # Вывести сделанную картинку на экран в точке (300, 300)
                 screen.blit(text1, [250, 350])
                 screen.blit(text2, [220, 420])
