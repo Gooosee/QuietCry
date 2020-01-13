@@ -109,6 +109,50 @@ bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 
 
+def start_screen():
+    delay = 0
+    text1 = "Quiet Cry"
+    fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 100)
+    string_rendered = font.render(text1, 1, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    intro_rect.y = 50
+    intro_rect.x = 250
+    screen.blit(string_rendered, intro_rect)
+
+    while True:
+        delay += 1
+        if delay % 5 == 0:
+            text2 = "Нажмите любую кнопку"
+        else:
+            text1, text2 = "Quiet Cry", ""
+            fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
+            screen.blit(fon, (0, 0))
+            font = pygame.font.Font(None, 100)
+            string_rendered = font.render(text1, 1, pygame.Color('black'))
+            intro_rect = string_rendered.get_rect()
+            intro_rect.y = 50
+            intro_rect.x = 250
+            screen.blit(string_rendered, intro_rect)
+        font = pygame.font.Font(None, 50)
+        string_rendered = font.render(text2, 1, pygame.Color('green'))
+        intro_rect = string_rendered.get_rect()
+        intro_rect.y = 750
+        intro_rect.x = 200
+        screen.blit(string_rendered, intro_rect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                return  # начинаем игру
+        pygame.display.flip()
+        pygame.time.Clock().tick(5)
+
+
+start_screen()
+
+
 class Person(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__(person_sprites)
@@ -344,7 +388,6 @@ class EnemyA(pygame.sprite.Sprite):
             self.direction = False  # Персонаж смотрит вправо
 
     def kick(self):
-        print()
         if self.direction:
             self.frames = enemyAKickLeft
         else:
@@ -554,7 +597,7 @@ def main():  # главная функция
                 screen.blit(text2, [220, 420])
         # Обновление спрайтов
         clock.tick(60)
-        pygame.time.delay(100)
+        pygame.time.delay(50)
         pygame.display.flip()
 
 
