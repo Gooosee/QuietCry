@@ -111,13 +111,14 @@ enemy_sprites = pygame.sprite.Group()
 
 class Person(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__(all_sprites, person_sprites)
+        super().__init__(person_sprites)
         # Начальные координаты персонажа
         self.pos_x = x
         self.hp = 150
         self.jump_count = 10
         self.re20 = False
         self.pos_y = y
+        self.sdvig = False
         self.landing = 505  # координата приземления при запрыгивание на платформу
         self.if_jump = False
         self.direction = False
@@ -131,15 +132,15 @@ class Person(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction = True  # Персонаж смотрит влево
             self.frames = personRunLeft
-            self.rect.x = self.pos_x - 40  # Выравнивание анимации
+
             if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                          (self.rect[1] + self.rect[3]) // 21) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
                     and not (self.if_jump)):
-                self.pos_x -= 10  # Смещение влево
+                self.rect.x -= 10  # Смещение влево
             elif self.if_jump:
-                self.pos_x -= 10
+                self.rect.x -= 10
             else:
                 for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
@@ -155,9 +156,9 @@ class Person(pygame.sprite.Sprite):
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2]) // 105, (self.rect[1] + self.rect[3]) // 21)
                     and not (self.if_jump)):
-                self.pos_x += 10  # Смещение вправо
+                self.rect.x += 10  # Смещение вправо
             elif self.if_jump:
-                self.pos_x += 10
+                self.rect.x += 10
             else:
                 for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
@@ -165,8 +166,6 @@ class Person(pygame.sprite.Sprite):
                                                      (self.rect[0] + self.rect[2]) // 105, i)):
                         self.rect.y = (i - 4) * 21
                         break
-        self.rect.x = self.pos_x
-        self.pos_y = self.rect.y
 
     def stop(self):  # Отсутствие движения
         if self.direction:
@@ -221,15 +220,15 @@ class Person(pygame.sprite.Sprite):
     def fire(self):  # Стрельба
         if self.direction:
             self.frames = personFireLeft
-            self.rect.x = self.pos_x
         else:
             self.frames = personFire
-            self.rect.x = self.pos_x - 5  # Выравнивание
         if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
             bul = Bullet(self.rect.x + 110, self.rect.y + 36, self.direction)  # Создание пули
 
     def update(self):
         if self.hp <= 0:
+            global dead
+            dead = True
             self.kill()
         running = False
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
@@ -239,6 +238,11 @@ class Person(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d]:  # Нажаты клавиши для
             # бега
             self.run(keys)
+            if self.direction:
+                self.sdvig = True
+            elif self.sdvig:
+                self.sdvig = False
+                self.rect.x = self.rect.x - 40  # Выравнивание анимации
             running = True
         if not self.if_jump:
             if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
@@ -253,13 +257,14 @@ class Person(pygame.sprite.Sprite):
                 self.stop()  # отсутствие движения
         else:
             self.jump()
+
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
 
 
 class Bullet(pygame.sprite.Sprite):  # Класс пуль
     def __init__(self, x, y, direction_bul):
-        super().__init__(all_sprites, bullet_sprites)
+        super().__init__(bullet_sprites)
         self.x, self.y, self.direction_bul = x, y, direction_bul
         self.image = bull  # Изображение пули
         self.rect = self.image.get_rect()
@@ -286,11 +291,12 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
 
 class EnemyA(pygame.sprite.Sprite):
     def __init__(self, x, y):
-        super().__init__(all_sprites, enemy_sprites)
+        super().__init__(enemy_sprites)
         # Начальные координаты персонажа
         self.hp = 40
         self.pos_x = x
         self.pos_y = y
+        self.running = False
         self.direction = False
         self.if_jump = False
         self.frames = enemyARun  # Анимация стоя
@@ -335,9 +341,10 @@ class EnemyA(pygame.sprite.Sprite):
                                                      (self.rect[0] + self.rect[2]) // 105, i)):
                         self.rect.y = (i - 3) * 21
                         break
-                self.direction = False  # Персонаж смотрит вправо
+            self.direction = False  # Персонаж смотрит вправо
 
     def kick(self):
+        print()
         if self.direction:
             self.frames = enemyAKickLeft
         else:
@@ -392,11 +399,12 @@ class EnemyA(pygame.sprite.Sprite):
         global f
         if self.hp <= 0:
             self.kill()
-        if abs(self.pos_x - pers.pos_x) > 70:  # Персонаж вне зоны досягаемости
+        if abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
             self.run()
+            self.running = True  # Враг бежит
         if not self.if_jump:
-            if abs(self.pos_x - pers.pos_x) <= 70 and abs(
-                    - pers.rect.y + self.rect.y) <= 50:  # Нажатие клавиши "h" для стрельбы
+            if abs(self.rect.x - pers.rect.x) <= 70 and abs(
+                    - pers.rect.y + self.rect.y) <= 50 and not(self.running):  #
                 self.kick()
             elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                 self.if_jump = True
@@ -408,22 +416,29 @@ class EnemyA(pygame.sprite.Sprite):
             f = True
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
+        self.running = False  # Враг стоит
 
 
-wave_count = 0
+wave_count = 0  # Номер волны
 
 
 def wave(i):
     global wave_count
-    xxl = xxr = 20
+    xxl = xxr = yyl = yyr = 20
     wave_count += 1
     for i in range(wave_count):
-        if i % 2 == 0:
+        if i % 4 == 0:
             en = EnemyA(-50 - xxl, 505)
-            xxl += 30
-        else:
+            xxl += 40
+        elif i % 4 == 1:
             en = EnemyA(850 + xxr, 505)
-            xxr += 30
+            xxr += 40
+        elif i % 4 == 2:
+            en = EnemyA(0, -10 - yyl)
+            yyl += 40
+        elif i % 4 == 3:
+            en = EnemyA(840, -10 - yyr)
+            yyr += 40
 
 
 class Tile(pygame.sprite.Sprite):
@@ -470,11 +485,13 @@ class Platforms(pygame.sprite.Sprite):
 time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 tile_width = 105
 tile_height = 21  # размер клетки
-
-pers = Person(305, 505)  # Начальное положение персонажа
+dead = False
+pers = Person(305, 670)  # Начальное положение персонажа
+ii = 0
 
 
 def main():  # главная функция
+    global ii
     level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
     clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)
@@ -488,13 +505,53 @@ def main():  # главная функция
                 i += 1
                 if i in time_wave:
                     wave(i)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    global dead
+                    global wave_count
+                    global pers
+                    if dead:
+                        dead = False
+                        print(1)
+                        for y in enemy_sprites:
+                            enemy_sprites.remove(y)
+                        pers = Person(305, 670)  # Начальное положение персонажа
+                        ii = 0
+                        wave_count = 0
 
         fon = LoadImage.load_image('fon1.png', 'data')
-        screen.blit(fon, [0, -80, 840, 840])
-        all_sprites.draw(screen)  # Отображение всех спрайтов
-        person_sprites.update()
-        enemy_sprites.update()
-        bullet_sprites.update()
+        if not dead:
+            screen.blit(fon, [0, -80, 840, 840])
+            person_sprites.draw(screen)
+            bullet_sprites.draw(screen)
+            tile_sprites.draw(screen)
+            enemy_sprites.draw(screen)  # Отображение всех спрайтов
+            person_sprites.update()
+            bullet_sprites.update()
+            enemy_sprites.update()  #
+        else:
+            print(1)
+
+            if ii == 0:
+                ii = i
+            elif i - ii < 3:
+                screen.blit(fon, [0, -80, 840, 840])
+                person_sprites.draw(screen)
+                bullet_sprites.draw(screen)
+                tile_sprites.draw(screen)
+                enemy_sprites.draw(screen)   # Отображение всех спрайтов
+                person_sprites.update()
+                bullet_sprites.update()
+                enemy_sprites.update()  #
+            else:
+                screen.blit(fon, [0, 0, 840, 840])
+                font = pygame.font.Font(None, 80)
+                text1 = font.render("Умер насмерть(", True, [100, 0, 0])
+                font = pygame.font.Font(None, 40)
+                text2 = font.render("Чтобы начать заного нажмите \"пробел\"", True, [100, 100, 100])
+                # Вывести сделанную картинку на экран в точке (300, 300)
+                screen.blit(text1, [250, 350])
+                screen.blit(text2, [220, 420])
         # Обновление спрайтов
         clock.tick(60)
         pygame.time.delay(100)
