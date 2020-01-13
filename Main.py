@@ -555,6 +555,7 @@ def main():  # главная функция
                     global pers
                     if dead:
                         dead = False
+                        print(1)
                         for y in enemy_sprites:
                             enemy_sprites.remove(y)
                         pers = Person(305, 670)  # Начальное положение персонажа
@@ -570,7 +571,10 @@ def main():  # главная функция
             enemy_sprites.draw(screen)  # Отображение всех спрайтов
             person_sprites.update()
             bullet_sprites.update()
-            enemy_sprites.update()
+            enemy_sprites.update()  #
+        else:
+            print(1)
+
             if ii == 0:
                 ii = i
             elif i - ii < 3:
@@ -581,7 +585,7 @@ def main():  # главная функция
                 enemy_sprites.draw(screen)   # Отображение всех спрайтов
                 person_sprites.update()
                 bullet_sprites.update()
-                enemy_sprites.update()
+                enemy_sprites.update()  #
             else:
                 screen.blit(fon, [0, 0, 840, 840])
                 font = pygame.font.Font(None, 80)
