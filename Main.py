@@ -115,8 +115,7 @@ def startGame():
 
     bull = LoadImage.load_image('bullet.png', 'data')
 
-
-    def start_screen():
+    def start_screen(frase='чтобы начать игру'):
         delay = 0
         text1 = "Quiet Cry"
         fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
@@ -131,7 +130,7 @@ def startGame():
         while True:
             delay += 1
             if delay % 5 == 0:
-                text2 = "Нажмите любую кнопку"
+                text2 = f"Нажмите любую кнопку {frase}"
             else:
                 text1, text2 = "Quiet Cry", ""
                 fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
@@ -146,7 +145,7 @@ def startGame():
             string_rendered = font.render(text2, 1, pygame.Color('green'))
             intro_rect = string_rendered.get_rect()
             intro_rect.y = 750
-            intro_rect.x = 200
+            intro_rect.x = 40
             screen.blit(string_rendered, intro_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -561,6 +560,8 @@ def startGame():
                             pers = Person(305, 670)  # Начальное положение персонажа
                             ii = 0
                             wave_count = 0
+                    elif event.key == pygame.K_p:  # пауза
+                        start_screen('чтобы продолжить')
 
             fon = LoadImage.load_image('fon1.png', 'data')
             if not dead:
@@ -602,6 +603,3 @@ def startGame():
             pygame.display.flip()
 
     main()
-
-
-
