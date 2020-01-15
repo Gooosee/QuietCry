@@ -10,13 +10,15 @@ tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 wave_count = 0  # Номер волны
+i = 0
+kill = 0
+
+
 def startGame():
     pygame.init()
     # создание окна
     size = width, height = 840, 840
     screen = pygame.display.set_mode(size)
-
-
 
     personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
                  LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
@@ -148,7 +150,7 @@ def startGame():
             screen.blit(string_rendered, intro_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    quit()
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     return  # начинаем игру
             pygame.display.flip()
@@ -445,9 +447,10 @@ def startGame():
                 self.rect.y += 105
 
         def update(self):
-            global f
+            global f, kill
             if self.hp <= 0:
                 self.kill()
+                kill += 1
             if abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
                 self.run()
                 self.running = True  # Враг бежит
@@ -525,26 +528,23 @@ def startGame():
                 else:
                     return False
 
-
     tile_width = 105
     tile_height = 21  # размер клетки
 
     pers = Person(305, 670)  # Начальное положение персонажа
 
-
     def main():  # главная функция
-        global time_wave
+        global time_wave, i, kill
         level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
         clock = pygame.time.Clock()
         pygame.time.set_timer(pygame.USEREVENT, 1000)
-        i = 0
         ii = 0
         running = True
 
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    quit()
                 if event.type == pygame.USEREVENT:
                     i += 1
                     if i in time_wave:
@@ -556,7 +556,6 @@ def startGame():
                         global pers
                         if dead:
                             dead = False
-                            print(1)
                             for y in enemy_sprites:
                                 enemy_sprites.remove(y)
                             pers = Person(305, 670)  # Начальное положение персонажа
@@ -603,3 +602,6 @@ def startGame():
             pygame.display.flip()
 
     main()
+
+
+

@@ -25,8 +25,8 @@
      <colorrole role="Window">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>255</red>
-        <green>255</green>
+        <red>200</red>
+        <green>200</green>
         <blue>0</blue>
        </color>
       </brush>
@@ -45,8 +45,8 @@
      <colorrole role="Window">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>255</red>
-        <green>255</green>
+        <red>200</red>
+        <green>200</green>
         <blue>0</blue>
        </color>
       </brush>
@@ -56,8 +56,8 @@
      <colorrole role="Base">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>255</red>
-        <green>255</green>
+        <red>200</red>
+        <green>200</green>
         <blue>0</blue>
        </color>
       </brush>
@@ -65,8 +65,8 @@
      <colorrole role="Window">
       <brush brushstyle="SolidPattern">
        <color alpha="255">
-        <red>255</red>
-        <green>255</green>
+        <red>200</red>
+        <green>200</green>
         <blue>0</blue>
        </color>
       </brush>
@@ -84,7 +84,7 @@
       <x>10</x>
       <y>80</y>
       <width>411</width>
-      <height>81</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="palette">
@@ -93,7 +93,7 @@
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
+          <red>200</red>
           <green>0</green>
           <blue>0</blue>
          </color>
@@ -104,7 +104,7 @@
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
+          <red>200</red>
           <green>0</green>
           <blue>0</blue>
          </color>
@@ -126,7 +126,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>14</pointsize>
+      <pointsize>22</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -135,70 +135,13 @@
      <string>Начать игру</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>411</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="palette">
-     <palette>
-      <active>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </active>
-      <inactive>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </inactive>
-      <disabled>
-       <colorrole role="ButtonText">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>120</red>
-          <green>120</green>
-          <blue>120</blue>
-         </color>
-        </brush>
-       </colorrole>
-      </disabled>
-     </palette>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Таблица рекордов</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pb3">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>210</y>
       <width>411</width>
-      <height>61</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="palette">
@@ -207,7 +150,7 @@
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
+          <red>200</red>
           <green>0</green>
           <blue>0</blue>
          </color>
@@ -218,7 +161,7 @@
        <colorrole role="ButtonText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
+          <red>200</red>
           <green>0</green>
           <blue>0</blue>
          </color>
@@ -240,7 +183,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>14</pointsize>
+      <pointsize>22</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -266,7 +209,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Created by: Vlad Romanov and Maxim Gusev</string>
+     <string>Created by: AnGREATern and Goooosee</string>
     </property>
    </widget>
   </widget>
