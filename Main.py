@@ -9,10 +9,9 @@ all_sprites = pygame.sprite.Group()
 tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
-
+kill = 0  # количество убитых монстров
 wave_count = 0  # Номер волны
 i = 0
-kill = 0
 
 
 def startGame():
@@ -561,20 +560,22 @@ def startGame():
                             dead = False
                             for y in enemy_sprites:
                                 enemy_sprites.remove(y)
+                            kill = 0
+                            i = 0
                             startGame()
                     elif event.key == pygame.K_p:  # пауза
                         start_screen('чтобы продолжить')
 
             fon = LoadImage.load_image('fon1.png', 'data')
             if not dead:
-                screen.blit(fon, (0, 0))
-                text = f'Здоровье: {pers.hp}'
+                screen.blit(fon, [0, 0, 840, 840])
                 font = pygame.font.Font(None, 50)
-                string_rendered = font.render(text, 1, pygame.Color('black'))
-                intro_rect = string_rendered.get_rect()
-                intro_rect.y = 30
-                intro_rect.x = 250
-                screen.blit(string_rendered, intro_rect)
+                text1 = font.render(f"Здоровье: {pers.hp}", True, [0, 0, 0])
+                font = pygame.font.Font(None, 50)
+                text2 = font.render(f"Счёт: {kill * 50 + i}", True, [100, 100, 100])
+                # Вывести сделанную картинку на экран в точке (300, 300)
+                screen.blit(text1, [200, 30])
+                screen.blit(text2, [200, 100])
 
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
