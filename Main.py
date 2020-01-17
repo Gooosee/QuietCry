@@ -1,25 +1,65 @@
+import random
+
 import pygame
 from random import choice
 import LoadImage
+
 time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-dead = False
-f = False
+dead = False  # Проверка на смерть персонажа
+bulletKill = False  # Проверка на нанесение дамага врагу, чтобы не удалить пулю до урона
 person_sprites = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
+particle_sprites = pygame.sprite.Group()
+kill = 0  # количество убитых монстров
 wave_count = 0  # Номер волны
-i = 0
-kill = 0
+i = 0  # Счетчик для таймера
+textWave = None  # Текст для вывода волны
+iWave = None  # Время в которое начала показываться надпись с волной
+
+
+class Particle(pygame.sprite.Sprite):
+    # сгенерируем частицы разного размера
+
+    def __init__(self, pos, dx, dy):
+        super().__init__(particle_sprites)
+        self.a = random.randint(5, 15)
+        print(self.a)
+        self.image = pygame.Surface([self.a, self.a])
+        self.image.fill([50, 0, 0])
+        self.rect = pygame.Rect(pos[0], pos[1], self.a, self.a)
+
+        # у каждой частицы своя скорость — это вектор
+        self.velocity = [dx, dy]
+        # и свои координаты
+
+        # гравитация будет одинаковой (значение константы)
+        self.gravity = 5
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        print(self.velocity)
+        # убиваем, если частица ушла за экран
+        if len(pygame.sprite.spritecollide(self, tile_sprites, False)) >= 1:
+            self.kill()
 
 
 def startGame():
     pygame.init()
+    # Загрузка музыки
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(1)
     # создание окна
     size = width, height = 840, 840
     screen = pygame.display.set_mode(size)
-
+    # загрузка спрайтов
     personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
                  LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
                  LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
@@ -115,8 +155,8 @@ def startGame():
 
     bull = LoadImage.load_image('bullet.png', 'data')
 
-    def start_screen(frase='чтобы начать игру'):
-        delay = 0
+    def start_screen(frase='чтобы начать игру'):  # заставка
+        delay = 0  # задержка для мигания надписи
         text1 = "Quiet Cry"
         fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
         screen.blit(fon, (0, 0))
@@ -155,7 +195,7 @@ def startGame():
             pygame.display.flip()
             pygame.time.Clock().tick(5)
 
-    start_screen()
+    start_screen()  # запуск стартового окна
 
     class Person(pygame.sprite.Sprite):
         def __init__(self, x, y):
@@ -180,17 +220,16 @@ def startGame():
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.direction = True  # Персонаж смотрит влево
                 self.frames = personRunLeft
-
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
-                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
-                        and not (self.if_jump)):
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105,
+                                             (self.rect[1] + self.rect[3]) // 21)
+                    and not (self.if_jump)) and self.rect.x > 1:
                     self.rect.x -= 10  # Смещение влево
-                elif self.if_jump:
+                elif self.if_jump and self.rect.x > 1:
                     self.rect.x -= 10
-                else:
+                elif self.rect.x > 1:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -202,14 +241,14 @@ def startGame():
                 self.frames = personRun
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
-                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
-                        and not (self.if_jump)):
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // 105,
+                                             (self.rect[1] + self.rect[3]) // 21)
+                    and not (self.if_jump)) and (self.rect.x + self.rect[2]) < 834:
                     self.rect.x += 10  # Смещение вправо
-                elif self.if_jump:
+                elif self.if_jump and (self.rect.x + self.rect[2]) < 834:
                     self.rect.x += 10
-                else:
+                elif (self.rect.x + self.rect[2]) < 834:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -268,6 +307,8 @@ def startGame():
                 self.rect.y += 35
 
         def fire(self):  # Стрельба
+            sound = pygame.mixer.Sound('fire2.wav') # звуки стрельбы
+            sound.play()
             if self.direction:
                 self.frames = personFireLeft
             else:
@@ -279,6 +320,8 @@ def startGame():
             if self.hp <= 0:
                 global dead
                 dead = True
+                for _ in range(30):  # Создание частиц крови
+                    part = Particle([self.rect.x + 50, self.rect.y + 30], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
             running = False
             keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
@@ -357,14 +400,15 @@ def startGame():
         def run(self):  # Бег
             if pers.rect.x < self.rect.x:
                 self.frames = enemyARunLeft
-                # self.rect.x = self.pos_x  # Выравнивание анимации
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // 105,
                                                  (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
-                    pass
+                    self.rect.x -= 6
+                elif self.if_jump:
+                    self.rect.x -= 6
                 else:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
@@ -372,7 +416,6 @@ def startGame():
                                                          (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 3) * 21
                             break  # Смещение влево
-                self.rect.x -= 6
                 self.direction = True  # Персонаж смотрит влево
             elif pers.rect.x > self.rect.x:
                 self.frames = enemyARun
@@ -392,7 +435,7 @@ def startGame():
                                                          (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 3) * 21
                             break
-                self.direction = False  # Персонаж смотрит вправо
+                self.direction = False  # Монстр смотрит вправо
 
         def kick(self):
             if self.direction:
@@ -448,6 +491,8 @@ def startGame():
         def update(self):
             global f, kill
             if self.hp <= 0:
+                for _ in range(20):  # Создание частиц
+                    part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
                 kill += 1
             if abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
@@ -469,11 +514,15 @@ def startGame():
             self.image = self.frames[self.cur_frame - 1]
             self.running = False  # Враг стоит
 
-
-    def wave(i):
+    def wave(i):  # Создание волн
         global wave_count
-        xxl = xxr = yyl = yyr = 20
+        global textWave
+        global iWave
+        xxl = xxr = yyl = yyr = 20  # Сдвиг каждого следующего мостра
         wave_count += 1
+        font = pygame.font.Font(None, 100)
+        textWave = font.render(f"WAVE {str(wave_count)}", True, [100, 0, 0])  # текст
+        iWave = i
         for i in range(wave_count):
             if i % 4 == 0:
                 en = EnemyA(-50 - xxl, 505)
@@ -536,7 +585,7 @@ def startGame():
         global time_wave, i, kill
         level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
         clock = pygame.time.Clock()
-        pygame.time.set_timer(pygame.USEREVENT, 1000)
+        pygame.time.set_timer(pygame.USEREVENT, 1000) # Таймер с переодичностью в секунду
         ii = 0
         running = True
 
@@ -552,31 +601,40 @@ def startGame():
                     if event.key == pygame.K_SPACE:
                         global dead
                         global wave_count
-                        global pers
                         if dead:
                             dead = False
                             for y in enemy_sprites:
-                                enemy_sprites.remove(y)
-                            pers = Person(305, 670)  # Начальное положение персонажа
-                            ii = 0
-                            wave_count = 0
+                                enemy_sprites.remove(y)  # удаление ненужных элементов
+                            kill = 0
+                            i = 0
+                            startGame()
                     elif event.key == pygame.K_p:  # пауза
                         start_screen('чтобы продолжить')
 
             fon = LoadImage.load_image('fon1.png', 'data')
+            global iWave
             if not dead:
-                print(1)
                 screen.blit(fon, [0, -80, 840, 840])
+                font = pygame.font.Font(None, 50)
+                if iWave is not None:
+                    if i - iWave <= 2:
+                        screen.blit(textWave, [300, 200])
+                text1 = font.render(f"Здоровье: {pers.hp}", True, [0, 0, 0])
+                font = pygame.font.Font(None, 50)
+                text2 = font.render(f"Счёт: {kill * 50 + i}", True, [100, 100, 100])
+                # Вывести сделанную картинку на экран в точке (300, 300)
+                screen.blit(text1, [200, 30])
+                screen.blit(text2, [200, 100])
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
                 tile_sprites.draw(screen)
+                particle_sprites.draw(screen)
                 enemy_sprites.draw(screen)  # Отображение всех спрайтов
                 person_sprites.update()
                 bullet_sprites.update()
-                enemy_sprites.update()  #
+                enemy_sprites.update()
+                particle_sprites.update()
             else:
-                print(1)
-
                 if ii == 0:
                     ii = i
                 elif i - ii < 3:
@@ -584,10 +642,14 @@ def startGame():
                     person_sprites.draw(screen)
                     bullet_sprites.draw(screen)
                     tile_sprites.draw(screen)
+                    particle_sprites.draw(screen)
                     enemy_sprites.draw(screen)  # Отображение всех спрайтов
                     person_sprites.update()
                     bullet_sprites.update()
-                    enemy_sprites.update()  #
+                    enemy_sprites.update()
+                    particle_sprites.update()
+                    iWave = None
+                    wave_count = 0
                 else:
                     screen.blit(fon, [0, 0, 840, 840])
                     font = pygame.font.Font(None, 80)
@@ -597,6 +659,7 @@ def startGame():
                     # Вывести сделанную картинку на экран в точке (300, 300)
                     screen.blit(text1, [250, 350])
                     screen.blit(text2, [220, 420])
+                    wave_count = 0
             # Обновление спрайтов
             clock.tick(60)
             pygame.time.delay(50)
