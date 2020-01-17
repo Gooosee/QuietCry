@@ -9,6 +9,7 @@ all_sprites = pygame.sprite.Group()
 tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
+
 wave_count = 0  # Номер волны
 i = 0
 kill = 0
@@ -16,6 +17,8 @@ kill = 0
 
 def startGame():
     pygame.init()
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(1)
     # создание окна
     size = width, height = 840, 840
     screen = pygame.display.set_mode(size)
@@ -267,6 +270,9 @@ def startGame():
                 self.rect.y += 35
 
         def fire(self):  # Стрельба
+            print(1)
+            sound = pygame.mixer.Sound('fire2.wav')
+            sound.play()
             if self.direction:
                 self.frames = personFireLeft
             else:
