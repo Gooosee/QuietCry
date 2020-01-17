@@ -562,6 +562,7 @@ def startGame():
                                 enemy_sprites.remove(y)
                             kill = 0
                             i = 0
+                            wave_count = 0
                             startGame()
                     elif event.key == pygame.K_p:  # пауза
                         start_screen('чтобы продолжить')
