@@ -5,9 +5,11 @@ import Main
 
 
 a = []
+openWin = False  # Проверка, открыто ли окно
 
 
 class MyWidget(QMainWindow):
+
     def __init__(self):
         super().__init__()
         uic.loadUi('menu.ui', self)
@@ -15,7 +17,11 @@ class MyWidget(QMainWindow):
         self.pb3.clicked.connect(self.quit)
 
     def start(self):
+        self.pb1.setEnabled(False)
         Main.startGame()
+
+
+
 
     def quit(self):
         quit()
