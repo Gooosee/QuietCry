@@ -15,7 +15,7 @@ bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 kill = 0  # количество убитых монстров
-wave_count = 0  # Номер волны
+wave_count = 2  # Номер волны
 i = 0  # Счетчик для таймера
 textWave = None  # Текст для вывода волны
 iWave = None  # Время в которое начала показываться надпись с волной
@@ -446,7 +446,7 @@ def startGame():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2] - 20) // 105,
+                                                 (self.rect[0] + self.rect[2]) // 105,
                                                  (self.rect[1] + self.rect[3]) // 21)):
                     self.rect.x -= 6
                 else:
@@ -454,14 +454,14 @@ def startGame():
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      self.rect[0] // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
+                                                         (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 3) * 21
                             break  # Смещение влево
                 self.direction = True
             else:
                 self.frames = enemyARun
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + 20) // 105,
+                                             (self.rect[0]) // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // 105,
@@ -470,7 +470,7 @@ def startGame():
                 else:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // 105, i) or
+                                                     (self.rect[0]) // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                          (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 3) * 21
