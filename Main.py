@@ -440,6 +440,43 @@ def startGame():
                             break
                 self.direction = False  # Монстр смотрит вправо
 
+        def smarter_run(self):
+            if self.direction:
+                self.frames = enemyARunLeft
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2] - 20) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)):
+                    self.rect.x -= 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     self.rect[0] // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break  # Смещение влево
+                self.direction = True
+            else:
+                self.frames = enemyARun
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + 20) // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)):
+                    self.rect.x += 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + 20) // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break
+                self.direction = False
+
         def kick(self):
             if self.direction:
                 self.frames = enemyAKickLeft
@@ -498,7 +535,9 @@ def startGame():
                     part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
                 kill += 1
-            if abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
+            if self.rect.y < pers.rect.y:
+                self.smarter_run()
+            elif abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
                 self.run()
                 self.running = True  # Враг бежит
             if not self.if_jump:
