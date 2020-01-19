@@ -20,9 +20,6 @@ class MyWidget(QMainWindow):
         self.pb1.setEnabled(False)
         Main.startGame()
 
-
-
-
     def quit(self):
         quit()
 

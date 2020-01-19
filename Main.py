@@ -223,7 +223,7 @@ def startGame():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105,
+                                             (self.rect[0] + self.rect[2] - 20) // 105,
                                              (self.rect[1] + self.rect[3]) // 21)
                     and not (self.if_jump)) and self.rect.x > 1:
                     self.rect.x -= 10  # Смещение влево
@@ -233,13 +233,13 @@ def startGame():
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
                             self.rect.y = (i - 4) * 21
                             break
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction = False  # Персонаж смотрит вправо
                 self.frames = personRun
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2]) // 105,
@@ -250,7 +250,8 @@ def startGame():
                     self.rect.x += 10
                 elif (self.rect.x + self.rect[2]) < 834:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + 20) // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                          (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 4) * 21
@@ -307,7 +308,7 @@ def startGame():
                 self.rect.y += 35
 
         def fire(self):  # Стрельба
-            sound = pygame.mixer.Sound('fire2.wav') # звуки стрельбы
+            sound = pygame.mixer.Sound('fire2.wav')  # звуки стрельбы
             sound.play()
             if self.direction:
                 self.frames = personFireLeft
@@ -403,7 +404,7 @@ def startGame():
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[0] + self.rect[2] - 20) // 105,
                                                  (self.rect[1] + self.rect[3]) // 21)
                         and not (self.if_jump)):
                     self.rect.x -= 6
@@ -413,13 +414,13 @@ def startGame():
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
                             self.rect.y = (i - 3) * 21
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             elif pers.rect.x > self.rect.x:
                 self.frames = enemyARun
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // 105,
@@ -430,7 +431,8 @@ def startGame():
                     self.rect.x += 6
                 else:
                     for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + 20) // 105, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                          (self.rect[0] + self.rect[2]) // 105, i)):
                             self.rect.y = (i - 3) * 21
@@ -585,7 +587,7 @@ def startGame():
         global time_wave, i, kill
         level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
         clock = pygame.time.Clock()
-        pygame.time.set_timer(pygame.USEREVENT, 1000) # Таймер с переодичностью в секунду
+        pygame.time.set_timer(pygame.USEREVENT, 1000)  # Таймер с переодичностью в секунду
         ii = 0
         running = True
 
