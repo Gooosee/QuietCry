@@ -708,3 +708,4 @@ def startGame():
             pygame.display.flip()
 
     main()
+startGame()
