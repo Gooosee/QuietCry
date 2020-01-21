@@ -391,13 +391,16 @@ def startGame():
             self.pos_x = x
             self.pos_y = y
             self.running = False
-            self.direction = False
             self.if_jump = False
             self.frames = enemyARun  # Анимация стоя
             self.cur_frame = 0  # Номер кадра
             self.image = enemyARun[self.cur_frame]  # Изображение спрайта
             self.rect = self.image.get_rect()
             self.rect = self.rect.move(self.pos_x, self.pos_y + 15)
+            if self.rect.x < (width // 2):
+                self.direction = False
+            else:
+                self.direction = True
 
         def run(self):  # Бег
             if pers.rect.x < self.rect.x:
@@ -478,7 +481,7 @@ def startGame():
                 self.direction = False
 
         def lower_run(self):
-            if self.rect.x > 600:
+            if self.direction:
                 self.frames = enemyARunLeft
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
@@ -497,7 +500,7 @@ def startGame():
                             self.rect.y = (i - 3) * 21
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
-            elif self.rect.x < 250:
+            else:
                 self.frames = enemyARun
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
