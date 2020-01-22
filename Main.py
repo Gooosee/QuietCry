@@ -391,13 +391,16 @@ def startGame():
             self.pos_x = x
             self.pos_y = y
             self.running = False
-            self.direction = False
             self.if_jump = False
             self.frames = enemyARun  # Анимация стоя
             self.cur_frame = 0  # Номер кадра
             self.image = enemyARun[self.cur_frame]  # Изображение спрайта
             self.rect = self.image.get_rect()
             self.rect = self.rect.move(self.pos_x, self.pos_y + 15)
+            if self.rect.x < (width // 2):
+                self.direction = False
+            else:
+                self.direction = True
 
         def run(self):  # Бег
             if pers.rect.x < self.rect.x:
@@ -420,6 +423,84 @@ def startGame():
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             elif pers.rect.x > self.rect.x:
+                self.frames = enemyARun
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
+                        and not (self.if_jump)):
+                    self.rect.x += 6  # Смещение вправо
+                elif self.if_jump:
+                    self.rect.x += 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0] + 20) // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break
+                self.direction = False  # Монстр смотрит вправо
+
+        def upper_run(self):
+            if self.direction:
+                self.frames = enemyARunLeft
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)):
+                    self.rect.x -= 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     self.rect[0] // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break  # Смещение влево
+                self.direction = True
+            else:
+                self.frames = enemyARun
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0]) // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)):
+                    self.rect.x += 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                     (self.rect[0]) // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2]) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break
+                self.direction = False
+
+        def lower_run(self):
+            if self.direction:
+                self.frames = enemyARunLeft
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
+                                             (self.rect[1] + self.rect[3]) // 21) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2] - 20) // 105,
+                                                 (self.rect[1] + self.rect[3]) // 21)
+                        and not (self.if_jump)):
+                    self.rect.x -= 6
+                elif self.if_jump:
+                    self.rect.x -= 6
+                else:
+                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                                Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
+                            self.rect.y = (i - 3) * 21
+                            break  # Смещение влево
+                self.direction = True  # Персонаж смотрит влево
+            else:
                 self.frames = enemyARun
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
                                              (self.rect[1] + self.rect[3]) // 21) or
@@ -498,7 +579,11 @@ def startGame():
                     part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
                 kill += 1
-            if abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
+            if self.rect.y < pers.rect.y:
+                self.upper_run()
+            elif (self.rect.y - 45) > pers.rect.y:
+                self.lower_run()
+            elif abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
                 self.run()
                 self.running = True  # Враг бежит
             if not self.if_jump:
@@ -669,3 +754,4 @@ def startGame():
             pygame.display.flip()
 
     main()
+startGame()
