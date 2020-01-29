@@ -156,16 +156,16 @@ def startGame():
 
     bull = LoadImage.load_image('bullet.png', 'data')
 
-    def start_screen(frase='чтобы начать игру'):  # заставка
+    def start_screen(frase):  # заставка
         delay = 0  # задержка для мигания надписи
         text1 = "Quiet Cry"
         fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
         screen.blit(fon, (0, 0))
-        font = pygame.font.Font(None, 100)
+        font = pygame.font.Font(None, 150)
         string_rendered = font.render(text1, 1, pygame.Color('black'))
         intro_rect = string_rendered.get_rect()
         intro_rect.y = 50
-        intro_rect.x = 250
+        intro_rect.x = 330
         screen.blit(string_rendered, intro_rect)
 
         while True:
@@ -176,17 +176,17 @@ def startGame():
                 text1, text2 = "Quiet Cry", ""
                 fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
                 screen.blit(fon, (0, 0))
-                font = pygame.font.Font(None, 100)
+                font = pygame.font.Font(None, 150)
                 string_rendered = font.render(text1, 1, pygame.Color('black'))
                 intro_rect = string_rendered.get_rect()
                 intro_rect.y = 50
-                intro_rect.x = 250
+                intro_rect.x = 330
                 screen.blit(string_rendered, intro_rect)
-            font = pygame.font.Font(None, 50)
+            font = pygame.font.Font(None, 70)
             string_rendered = font.render(text2, 1, pygame.Color('green'))
             intro_rect = string_rendered.get_rect()
-            intro_rect.y = 750
-            intro_rect.x = 40
+            intro_rect.y = 950
+            intro_rect.x = 100
             screen.blit(string_rendered, intro_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -704,13 +704,13 @@ def startGame():
                 font = pygame.font.Font(None, 50)
                 if iWave is not None:
                     if i - iWave <= 2:
-                        screen.blit(textWave, [300, 200])
+                        screen.blit(textWave, [520, 200])
                 text1 = font.render(f"Здоровье: {pers.hp}", True, [0, 0, 0])
                 font = pygame.font.Font(None, 50)
                 text2 = font.render(f"Счёт: {kill * 50 + i}", True, [100, 100, 100])
                 # Вывести сделанную картинку на экран в точке (300, 300)
-                screen.blit(text1, [200, 30])
-                screen.blit(text2, [200, 100])
+                screen.blit(text1, [50, 30])
+                screen.blit(text2, [50, 100])
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
                 tile_sprites.draw(screen)
@@ -738,13 +738,13 @@ def startGame():
                     wave_count = 0
                 else:
                     screen.blit(fon, (0, 0, 1280, 1024))
-                    font = pygame.font.Font(None, 80)
+                    font = pygame.font.Font(None, 110)
                     text1 = font.render("Умер насмерть(", True, [100, 0, 0])
-                    font = pygame.font.Font(None, 40)
+                    font = pygame.font.Font(None, 65)
                     text2 = font.render("Чтобы начать заново нажмите \"пробел\"", True, [100, 100, 100])
                     # Вывести сделанную картинку на экран в точке (300, 300)
-                    screen.blit(text1, [250, 350])
-                    screen.blit(text2, [220, 420])
+                    screen.blit(text1, [360, 400])
+                    screen.blit(text2, [200, 530])
                     wave_count = 0
             # Обновление спрайтов
             clock.tick(60)
