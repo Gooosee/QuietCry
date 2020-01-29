@@ -55,10 +55,10 @@ class Particle(pygame.sprite.Sprite):
 def startGame():
     pygame.init()
     # Загрузка музыки
-    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.load('sounds\music.mp3')
     pygame.mixer.music.play(1)
     # создание окна
-    size = width, height = 840, 840
+    size = width, height = 1280, 1024
     screen = pygame.display.set_mode(size)
     # загрузка спрайтов
     personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
@@ -159,7 +159,7 @@ def startGame():
     def start_screen(frase='чтобы начать игру'):  # заставка
         delay = 0  # задержка для мигания надписи
         text1 = "Quiet Cry"
-        fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
+        fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
         screen.blit(fon, (0, 0))
         font = pygame.font.Font(None, 100)
         string_rendered = font.render(text1, 1, pygame.Color('black'))
@@ -174,7 +174,7 @@ def startGame():
                 text2 = f"Нажмите любую кнопку {frase}"
             else:
                 text1, text2 = "Quiet Cry", ""
-                fon = pygame.transform.scale(LoadImage.load_image('fon1.png', 'data'), (width, height))
+                fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
                 screen.blit(fon, (0, 0))
                 font = pygame.font.Font(None, 100)
                 string_rendered = font.render(text1, 1, pygame.Color('black'))
@@ -221,41 +221,41 @@ def startGame():
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.direction = True  # Персонаж смотрит влево
                 self.frames = personRunLeft
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2] - 20) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21)
+                                             (self.rect[0] + self.rect[2] - 20) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height)
                     and not (self.if_jump)) and self.rect.x > 1:
                     self.rect.x -= 10  # Смещение влево
                 elif self.if_jump and self.rect.x > 1:
                     self.rect.x -= 10
                 elif self.rect.x > 1:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
-                            self.rect.y = (i - 4) * 21
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
+                            self.rect.y = (i - 4) * tile_height
                             break
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction = False  # Персонаж смотрит вправо
                 self.frames = personRun
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0] + self.rect[2]) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21)
-                    and not (self.if_jump)) and (self.rect.x + self.rect[2]) < 834:
+                                             (self.rect[0] + self.rect[2]) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height)
+                    and not (self.if_jump)) and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10  # Смещение вправо
-                elif self.if_jump and (self.rect.x + self.rect[2]) < 834:
+                elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10
-                elif (self.rect.x + self.rect[2]) < 834:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                elif (self.rect.x + self.rect[2]) < width - 6:
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, 40):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // 105, i) or
+                                                     (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
-                            self.rect.y = (i - 4) * 21
+                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
+                            self.rect.y = (i - 4) * tile_height
                             break
 
         def stop(self):  # Отсутствие движения
@@ -274,10 +274,10 @@ def startGame():
                     self.frames = personJumpLeft[2:3]
                 else:
                     self.frames = personJump[2:3]
-                if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                                 (self.rect[1] // 21)) or
+                if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                                 (self.rect[1] // tile_height)) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
+                                                 (self.rect[0] + self.rect[2]) // tile_width, (self.rect[1] // tile_height))):
                     self.rect.y -= self.jump_count ** 2 // 2
                     self.jump_count -= 1
                 else:
@@ -288,11 +288,11 @@ def startGame():
                     self.frames = personJumpLeft[3:4]
                 else:
                     self.frames = personJump[3:4]
-                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + self.rect[2]) // 105, i)):
-                        self.landing = (i - 8) * 21 - 6
+                                                     (self.rect[0] + self.rect[2]) // tile_width, i)):
+                        self.landing = (i - 8) * tile_height - 6
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -309,7 +309,7 @@ def startGame():
                 self.rect.y += 35
 
         def fire(self):  # Стрельба
-            sound = pygame.mixer.Sound('fire2.wav')  # звуки стрельбы
+            sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
             sound.play()
             if self.direction:
                 self.frames = personFireLeft
@@ -405,119 +405,119 @@ def startGame():
         def run(self):  # Бег
             if pers.rect.x < self.rect.x:
                 self.frames = enemyARunLeft
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2] - 20) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2] - 20) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)
                         and not (self.if_jump)):
                     self.rect.x -= 6
                 elif self.if_jump:
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             elif pers.rect.x > self.rect.x:
                 self.frames = enemyARun
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)
                         and not (self.if_jump)):
                     self.rect.x += 6  # Смещение вправо
                 elif self.if_jump:
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // 105, i) or
+                                                     (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height - 6
                             break
                 self.direction = False  # Монстр смотрит вправо
 
         def upper_run(self):
             if self.direction:
                 self.frames = enemyARunLeft
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)):
+                                                 (self.rect[0] + self.rect[2]) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)):
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     self.rect[0] // 105, i) or
+                                                     self.rect[0] // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height - 6
                             break  # Смещение влево
                 self.direction = True
             else:
                 self.frames = enemyARun
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                             (self.rect[0]) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                                             (self.rect[0]) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)):
+                                                 (self.rect[0] + self.rect[2]) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)):
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0]) // 105, i) or
+                                                     (self.rect[0]) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height - 6
                             break
                 self.direction = False
 
         def lower_run(self):
             if self.direction:
                 self.frames = enemyARunLeft
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2] - 20) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2] - 20) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)
                         and not (self.if_jump)):
                     self.rect.x -= 6
                 elif self.if_jump:
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                        if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height - 6
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             else:
                 self.frames = enemyARun
-                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // 105,
-                                             (self.rect[1] + self.rect[3]) // 21) or
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // tile_width,
+                                             (self.rect[1] + self.rect[3]) // tile_height) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105,
-                                                 (self.rect[1] + self.rect[3]) // 21)
+                                                 (self.rect[0] + self.rect[2]) // tile_width,
+                                                 (self.rect[1] + self.rect[3]) // tile_height)
                         and not (self.if_jump)):
                     self.rect.x += 6  # Смещение вправо
                 elif self.if_jump:
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // 21, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // 105, i) or
+                                                     (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // 105, i)):
-                            self.rect.y = (i - 3) * 21
+                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
+                            self.rect.y = (i - 3) * tile_height - 6
                             break
                 self.direction = False  # Монстр смотрит вправо
 
@@ -538,10 +538,10 @@ def startGame():
                     self.frames = enemyAJumpLeft[2:3]
                 else:
                     self.frames = enemyAJump[2:3]
-                if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105,
-                                                 (self.rect[1] // 21)) or
+                if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                                 (self.rect[1] // tile_height)) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                 (self.rect[0] + self.rect[2]) // 105, (self.rect[1] // 21))):
+                                                 (self.rect[0] + self.rect[2]) // tile_width, (self.rect[1] // tile_height))):
                     self.rect.y -= self.jump_count ** 2 // 2
                     self.jump_count -= 1
                 else:
@@ -552,11 +552,11 @@ def startGame():
                     self.frames = enemyAJumpLeft[2:3]
                 else:
                     self.frames = enemyAJump[2:3]
-                for i in range((self.rect[1] + self.rect[3]) // 21, 40):
-                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // 105, i) or
+                for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + self.rect[2]) // 105, i)):
-                        self.landing = (i - 8) * 21 - 6
+                                                     (self.rect[0] + self.rect[2]) // tile_width, i)):
+                        self.landing = (i - 8) * tile_height - 6
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -655,19 +655,19 @@ def startGame():
                 # вернем размер поля в клетках
                 return x, y
             else:  # проверка наличия тайла
-                if x > 7:
-                    x = 7
-                if y > 39:
-                    y = 39
+                if x > 19:
+                    x = 19
+                if y > 51:
+                    y = 51
                 if level[y][x] == '#' or level[y][x] == '@':
                     return True
                 else:
                     return False
 
-    tile_width = 105
-    tile_height = 21  # размер клетки
+    tile_width = 64
+    tile_height = 20  # размер клетки
 
-    pers = Person(305, 670)  # Начальное положение персонажа
+    pers = Person(305, 815)  # Начальное положение персонажа
 
     def main():  # главная функция
         global time_wave, i, kill
@@ -699,10 +699,10 @@ def startGame():
                     elif event.key == pygame.K_p:  # пауза
                         start_screen('чтобы продолжить')
 
-            fon = LoadImage.load_image('fon1.png', 'data')
+            fon = LoadImage.load_image('fon_b.png', 'data')
             global iWave
             if not dead:
-                screen.blit(fon, [0, -80, 840, 840])
+                screen.blit(fon, (0, 0, 1280, 1024))
                 font = pygame.font.Font(None, 50)
                 if iWave is not None:
                     if i - iWave <= 2:
@@ -726,7 +726,7 @@ def startGame():
                 if ii == 0:
                     ii = i
                 elif i - ii < 3:
-                    screen.blit(fon, [0, -80, 840, 840])
+                    screen.blit(fon, (0, 0, 1280, 1024))
                     person_sprites.draw(screen)
                     bullet_sprites.draw(screen)
                     tile_sprites.draw(screen)
@@ -739,7 +739,7 @@ def startGame():
                     iWave = None
                     wave_count = 0
                 else:
-                    screen.blit(fon, [0, 0, 840, 840])
+                    screen.blit(fon, (0, 0, 1280, 1024))
                     font = pygame.font.Font(None, 80)
                     text1 = font.render("Умер насмерть(", True, [100, 0, 0])
                     font = pygame.font.Font(None, 40)
