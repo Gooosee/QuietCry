@@ -292,7 +292,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 6
+                        self.landing = (i - 8) * tile_height - 8
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -556,7 +556,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 6
+                        self.landing = (i - 8) * tile_height - 8
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -667,7 +667,7 @@ def startGame():
     tile_width = 64
     tile_height = 20  # размер клетки
 
-    pers = Person(305, 815)  # Начальное положение персонажа
+    pers = Person(305, 816)  # Начальное положение персонажа
 
     def main():  # главная функция
         global time_wave, i, kill
