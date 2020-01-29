@@ -314,7 +314,7 @@ def startGame():
             else:
                 self.frames = personFire
             if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
-                bul = Bullet(self.rect.x + 110, self.rect.y + 36, self.direction)  # Создание пули
+                bul = Bullet(self.rect.x + 80, self.rect.y + 36, self.direction)  # Создание пули
 
         def update(self):
             if self.hp <= 0:
@@ -362,7 +362,7 @@ def startGame():
             self.image = bull  # Изображение пули
             self.rect = self.image.get_rect()
             if direction_bul:  # Проверка направления и смещение координаты появления пули
-                self.x -= 115
+                self.x -= 75
             self.rect = self.rect.move(self.x, self.y)
 
         def update(self, *args):
