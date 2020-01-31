@@ -15,6 +15,8 @@ class Menu:
         self.butExit = Button.Button(992, 826, 124, 19)
 
     def updateClicked(self, pos):
+        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+        soundBut1.play()
         if self.butExit.clicked(pos, LoadImage.load_image('Exit_a.png', 'data')):
             quit()
         else:
