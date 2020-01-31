@@ -248,7 +248,7 @@ def startGame():
                 elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10
                 elif (self.rect.x + self.rect[2]) < width - 6:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -290,7 +290,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 8
+                        self.landing = (i - 9) * tile_height + 6
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -328,15 +328,9 @@ def startGame():
             if self.re20:
                 self.rect.y += 55
                 self.re20 = False
-            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[
-                pygame.K_d]:  # Нажаты клавиши для
-                # бега
+            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d]:
+                # Нажаты клавиши для бега
                 self.run(keys)
-                if self.direction:
-                    self.sdvig = True
-                elif self.sdvig:
-                    self.sdvig = False
-                    self.rect.x = self.rect.x - 40  # Выравнивание анимации
                 running = True
             if not self.if_jump:
                 if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
@@ -554,7 +548,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 8
+                        self.landing = (i - 9) * tile_height + 3
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
