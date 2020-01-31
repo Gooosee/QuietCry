@@ -70,12 +70,15 @@ while MenuOpen:
                 pospos = event.pos
         menu.updateNotClicked(pospos)
     else:
+
         intro = LoadImage.load_image(f'Start{iIntro}.png', 'intro')
         screen.blit(intro, (0, 0))
         if iIntro == 16:
             pygame.mixer.music.load('sounds/music.mp3')
             pygame.mixer.music.play(100)
         if iIntro == 1:
+            sound = pygame.mixer.Sound('sounds/scary_intro.wav')  # звук во время заставки
+            sound.play()
             pygame.time.delay(200)
         if iIntro == 9:
             pygame.time.delay(200)
