@@ -156,16 +156,16 @@ def startGame():
 
     bull = LoadImage.load_image('bullet.png', 'data')
 
-    def start_screen(frase='чтобы начать игру'):  # заставка
+    def start_screen(frase):  # заставка
         delay = 0  # задержка для мигания надписи
         text1 = "Quiet Cry"
         fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
         screen.blit(fon, (0, 0))
-        font = pygame.font.Font(None, 100)
+        font = pygame.font.Font(None, 150)
         string_rendered = font.render(text1, 1, pygame.Color('black'))
         intro_rect = string_rendered.get_rect()
         intro_rect.y = 50
-        intro_rect.x = 250
+        intro_rect.x = 330
         screen.blit(string_rendered, intro_rect)
 
         while True:
@@ -176,17 +176,17 @@ def startGame():
                 text1, text2 = "Quiet Cry", ""
                 fon = pygame.transform.scale(LoadImage.load_image('fon_b.png', 'data'), (width, height))
                 screen.blit(fon, (0, 0))
-                font = pygame.font.Font(None, 100)
+                font = pygame.font.Font(None, 150)
                 string_rendered = font.render(text1, 1, pygame.Color('black'))
                 intro_rect = string_rendered.get_rect()
                 intro_rect.y = 50
-                intro_rect.x = 250
+                intro_rect.x = 330
                 screen.blit(string_rendered, intro_rect)
-            font = pygame.font.Font(None, 50)
+            font = pygame.font.Font(None, 70)
             string_rendered = font.render(text2, 1, pygame.Color('green'))
             intro_rect = string_rendered.get_rect()
-            intro_rect.y = 750
-            intro_rect.x = 40
+            intro_rect.y = 950
+            intro_rect.x = 100
             screen.blit(string_rendered, intro_rect)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -248,7 +248,7 @@ def startGame():
                 elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10
                 elif (self.rect.x + self.rect[2]) < width - 6:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, 40):
+                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -290,7 +290,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 8
+                        self.landing = (i - 9) * tile_height + 6
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -314,7 +314,7 @@ def startGame():
             else:
                 self.frames = personFire
             if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
-                bul = Bullet(self.rect.x + 80, self.rect.y + 36, self.direction)  # Создание пули
+                bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
 
         def update(self):
             if self.hp <= 0:
@@ -328,15 +328,9 @@ def startGame():
             if self.re20:
                 self.rect.y += 55
                 self.re20 = False
-            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[
-                pygame.K_d]:  # Нажаты клавиши для
-                # бега
+            if keys[pygame.K_RIGHT] or keys[pygame.K_a] or keys[pygame.K_LEFT] or keys[pygame.K_d]:
+                # Нажаты клавиши для бега
                 self.run(keys)
-                if self.direction:
-                    self.sdvig = True
-                elif self.sdvig:
-                    self.sdvig = False
-                    self.rect.x = self.rect.x - 40  # Выравнивание анимации
                 running = True
             if not self.if_jump:
                 if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
@@ -362,13 +356,13 @@ def startGame():
             self.image = bull  # Изображение пули
             self.rect = self.image.get_rect()
             if direction_bul:  # Проверка направления и смещение координаты появления пули
-                self.x -= 75
+                self.x -= 25
             self.rect = self.rect.move(self.x, self.y)
 
         def update(self, *args):
             global f
             if not self.direction_bul:
-                if self.rect.x <= 800:
+                if self.rect.x <= 1280:
                     self.rect.x += 60
                 else:
                     self.kill()  # Уничтожение пуль вышедших за границы экрана
@@ -554,7 +548,7 @@ def startGame():
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width, i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 8) * tile_height - 8
+                        self.landing = (i - 9) * tile_height + 3
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -609,18 +603,18 @@ def startGame():
         font = pygame.font.Font(None, 100)
         textWave = font.render(f"WAVE {str(wave_count)}", True, [100, 0, 0])  # текст
         iWave = i
-        for i in range(wave_count):
-            if i % 4 == 0:
-                en = EnemyA(-50 - xxl, 505)
+        for y in range(wave_count):
+            if y % 4 == 0:
+                en = EnemyA(-50 - xxl, 840)
                 xxl += 40
-            elif i % 4 == 1:
-                en = EnemyA(850 + xxr, 505)
+            elif y % 4 == 1:
+                en = EnemyA(1280 + xxr, 840)
                 xxr += 40
-            elif i % 4 == 2:
+            elif y % 4 == 2:
                 en = EnemyA(0, -10 - yyl)
                 yyl += 40
-            elif i % 4 == 3:
-                en = EnemyA(840, -10 - yyr)
+            elif y % 4 == 3:
+                en = EnemyA(1280, -10 - yyr)
                 yyr += 40
 
     class Tile(pygame.sprite.Sprite):
@@ -665,7 +659,7 @@ def startGame():
     tile_width = 64
     tile_height = 20  # размер клетки
 
-    pers = Person(305, 816)  # Начальное положение персонажа
+    pers = Person(305, 850)  # Начальное положение персонажа
 
     def main():  # главная функция
         global time_wave, i, kill
@@ -684,6 +678,8 @@ def startGame():
                     if i in time_wave:
                         wave(i)
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        quit()
                     if event.key == pygame.K_SPACE:
                         global dead
                         global wave_count
@@ -704,13 +700,13 @@ def startGame():
                 font = pygame.font.Font(None, 50)
                 if iWave is not None:
                     if i - iWave <= 2:
-                        screen.blit(textWave, [300, 200])
+                        screen.blit(textWave, [520, 200])
                 text1 = font.render(f"Здоровье: {pers.hp}", True, [0, 0, 0])
                 font = pygame.font.Font(None, 50)
                 text2 = font.render(f"Счёт: {kill * 50 + i}", True, [100, 100, 100])
                 # Вывести сделанную картинку на экран в точке (300, 300)
-                screen.blit(text1, [200, 30])
-                screen.blit(text2, [200, 100])
+                screen.blit(text1, [50, 30])
+                screen.blit(text2, [50, 100])
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
                 tile_sprites.draw(screen)
@@ -738,13 +734,13 @@ def startGame():
                     wave_count = 0
                 else:
                     screen.blit(fon, (0, 0, 1280, 1024))
-                    font = pygame.font.Font(None, 80)
+                    font = pygame.font.Font(None, 110)
                     text1 = font.render("Умер насмерть(", True, [100, 0, 0])
-                    font = pygame.font.Font(None, 40)
+                    font = pygame.font.Font(None, 65)
                     text2 = font.render("Чтобы начать заново нажмите \"пробел\"", True, [100, 100, 100])
                     # Вывести сделанную картинку на экран в точке (300, 300)
-                    screen.blit(text1, [250, 350])
-                    screen.blit(text2, [220, 420])
+                    screen.blit(text1, [360, 400])
+                    screen.blit(text2, [200, 530])
                     wave_count = 0
             # Обновление спрайтов
             clock.tick(60)
