@@ -1,4 +1,5 @@
 import random
+import sys
 
 import pygame
 from random import choice
@@ -20,6 +21,7 @@ wave_count = 0  # Номер волны
 i = 0  # Счетчик для таймера
 textWave = None  # Текст для вывода волны
 iWave = None  # Время в которое начала показываться надпись с волной
+weapon = 'm4a1s'
 
 
 class Particle(pygame.sprite.Sprite):
@@ -62,57 +64,89 @@ def startGame():
     size = width, height = 1280, 1024
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
     # загрузка спрайтов
-    personRun = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
-                 LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
-                 LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
+    personRunM4 = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
+                   LoadImage.load_image('anim2_person_run_m4a1s.png', 'data'),
+                   LoadImage.load_image('anim3_person_run_m4a1s.png', 'data')]
 
-    personRunLeft = [pygame.transform.flip(personRun[0], True, False),
-                     pygame.transform.flip(personRun[1], True, False),
-                     pygame.transform.flip(personRun[2], True, False)]
+    personRunLeftM4 = [pygame.transform.flip(personRunM4[0], True, False),
+                       pygame.transform.flip(personRunM4[1], True, False),
+                       pygame.transform.flip(personRunM4[2], True, False)]
 
-    personJump = [LoadImage.load_image('anim1_person_jump_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim2_person_jump_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim3_person_jump_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim4_person_jump_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim5_person_jump_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim6_person_jump_m4a1s.png', 'data')]
+    personJumpM4 = [LoadImage.load_image('anim1_person_jump_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim2_person_jump_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim3_person_jump_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim4_person_jump_m4a1s.png', 'data')]
 
-    personJumpLeft = [pygame.transform.flip(personJump[0], True, False),
-                      pygame.transform.flip(personJump[1], True, False),
-                      pygame.transform.flip(personJump[2], True, False),
-                      pygame.transform.flip(personJump[3], True, False),
-                      pygame.transform.flip(personJump[4], True, False),
-                      pygame.transform.flip(personJump[5], True, False)]
+    personJumpLeftM4 = [pygame.transform.flip(personJumpM4[0], True, False),
+                        pygame.transform.flip(personJumpM4[1], True, False),
+                        pygame.transform.flip(personJumpM4[2], True, False),
+                        pygame.transform.flip(personJumpM4[3], True, False)]
 
-    personFire = [LoadImage.load_image('anim1_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data')]
+    personFireM4 = [LoadImage.load_image('anim1_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim4_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim2_person_fire_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim3_person_fire_m4a1s.png', 'data')]
 
-    personFireLeft = [pygame.transform.flip(personFire[0], True, False),
-                      pygame.transform.flip(personFire[1], True, False),
-                      pygame.transform.flip(personFire[2], True, False),
-                      pygame.transform.flip(personFire[3], True, False),
-                      pygame.transform.flip(personFire[4], True, False),
-                      pygame.transform.flip(personFire[5], True, False),
-                      pygame.transform.flip(personFire[6], True, False),
-                      pygame.transform.flip(personFire[7], True, False),
-                      pygame.transform.flip(personFire[8], True, False)]
+    personFireLeftM4 = [pygame.transform.flip(personFireM4[0], True, False),
+                        pygame.transform.flip(personFireM4[1], True, False),
+                        pygame.transform.flip(personFireM4[2], True, False),
+                        pygame.transform.flip(personFireM4[3], True, False),
+                        pygame.transform.flip(personFireM4[4], True, False),
+                        pygame.transform.flip(personFireM4[5], True, False),
+                        pygame.transform.flip(personFireM4[6], True, False),
+                        pygame.transform.flip(personFireM4[7], True, False),
+                        pygame.transform.flip(personFireM4[8], True, False)]
 
-    personStop = [LoadImage.load_image('anim1_person_stop_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim2_person_stop_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim3_person_stop_m4a1s.png', 'data'),
-                  LoadImage.load_image('anim4_person_stop_m4a1s.png', 'data')]
+    personStopM4 = [LoadImage.load_image('anim1_person_stop_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim2_person_stop_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim3_person_stop_m4a1s.png', 'data'),
+                    LoadImage.load_image('anim4_person_stop_m4a1s.png', 'data')]
 
-    personStopLeft = [pygame.transform.flip(personStop[0], True, False),
-                      pygame.transform.flip(personStop[1], True, False),
-                      pygame.transform.flip(personStop[2], True, False),
-                      pygame.transform.flip(personStop[3], True, False)]
+    personStopLeftM4 = [pygame.transform.flip(personStopM4[0], True, False),
+                        pygame.transform.flip(personStopM4[1], True, False),
+                        pygame.transform.flip(personStopM4[2], True, False),
+                        pygame.transform.flip(personStopM4[3], True, False)]
+
+    personRunSG = [LoadImage.load_image('anim1_run_shotgun.png', 'data'),
+                   LoadImage.load_image('anim2_run_shotgun.png', 'data'),
+                   LoadImage.load_image('anim3_run_shotgun.png', 'data')]
+
+    personRunLeftSG = [pygame.transform.flip(personRunSG[0], True, False),
+                       pygame.transform.flip(personRunSG[1], True, False),
+                       pygame.transform.flip(personRunSG[2], True, False)]
+
+    personJumpSG = [LoadImage.load_image('anim1_jump_shotgun.png', 'data'),
+                    LoadImage.load_image('anim2_jump_shotgun.png', 'data'),
+                    LoadImage.load_image('anim3_jump_shotgun.png', 'data'),
+                    LoadImage.load_image('anim4_jump_shotgun.png', 'data')]
+
+    personJumpLeftSG = [pygame.transform.flip(personJumpSG[0], True, False),
+                        pygame.transform.flip(personJumpSG[1], True, False),
+                        pygame.transform.flip(personJumpSG[2], True, False),
+                        pygame.transform.flip(personJumpSG[3], True, False)]
+
+    personFireSG = [LoadImage.load_image('anim1_fire_shotgun.png', 'data'),
+                    LoadImage.load_image('anim2_fire_shotgun.png', 'data'),
+                    LoadImage.load_image('anim3_fire_shotgun.png', 'data')]
+
+    personFireLeftSG = [pygame.transform.flip(personFireSG[0], True, False),
+                        pygame.transform.flip(personFireSG[1], True, False),
+                        pygame.transform.flip(personFireSG[2], True, False)]
+
+    personStopSG = [LoadImage.load_image('anim1_stop_shotgun.png', 'data'),
+                    LoadImage.load_image('anim2_stop_shotgun.png', 'data'),
+                    LoadImage.load_image('anim3_stop_shotgun.png', 'data'),
+                    LoadImage.load_image('anim4_stop_shotgun.png', 'data')]
+
+    personStopLeftSG = [pygame.transform.flip(personStopSG[0], True, False),
+                        pygame.transform.flip(personStopSG[1], True, False),
+                        pygame.transform.flip(personStopSG[2], True, False),
+                        pygame.transform.flip(personStopSG[3], True, False)]
 
     enemyARun = [LoadImage.load_image('anim1_enemyA_run.png', 'data'),
                  LoadImage.load_image('anim2_enemyA_run.png', 'data'),
@@ -198,11 +232,14 @@ def startGame():
             pygame.time.Clock().tick(5)
 
     class Person(pygame.sprite.Sprite):
+        global i
+
         def __init__(self, x, y):
             super().__init__(person_sprites)
             # Начальные координаты персонажа
             self.pos_x = x
             self.hp = 150
+            self.fireSG = 0
             self.jump_count = 10
             self.re20 = False
             self.pos_y = y
@@ -211,8 +248,8 @@ def startGame():
             self.if_jump = False
             self.direction = False
             self.cur_frame = 0  # Номер кадра
-            self.frames = personStop  # Анимация стоя
-            self.image = personStop[self.cur_frame]  # Изображение спрайта
+            self.frames = personStopM4  # Анимация стоя
+            self.image = personStopM4[self.cur_frame]  # Изображение спрайта
             self.rect = self.image.get_rect()
             self.rect = self.rect.move(self.pos_x, self.pos_y)
             self.soundTime = -99
@@ -220,7 +257,10 @@ def startGame():
         def run(self, keys):  # Бег
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.direction = True  # Персонаж смотрит влево
-                self.frames = personRunLeft
+                if weapon == 'm4a1s':
+                    self.frames = personRunLeftM4
+                else:
+                    self.frames = personRunLeftSG
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
                                              (self.rect[1] + self.rect[3]) // tile_height) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -240,7 +280,10 @@ def startGame():
                             break
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction = False  # Персонаж смотрит вправо
-                self.frames = personRun
+                if weapon == 'm4a1s':
+                    self.frames = personRunM4
+                else:
+                    self.frames = personRunSG
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'), (self.rect[0] + 20) // tile_width,
                                              (self.rect[1] + self.rect[3]) // tile_height) or
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -261,20 +304,38 @@ def startGame():
 
         def stop(self):  # Отсутствие движения
             if self.direction:
-                self.frames = personStopLeft
+                if weapon == 'm4a1s':
+                    self.frames = personStopLeftM4
+                else:
+                    self.frames = personStopLeftSG
             else:
-                self.frames = personStop
+                if weapon == 'm4a1s':
+                    self.frames = personStopM4
+                else:
+                    self.frames = personStopSG
 
         def jump(self):  # Прыжок
             if self.direction:
-                self.frames = personJumpLeft[:1]
+                if weapon == 'm4a1s':
+                    self.frames = personJumpLeftM4[:2]
+                else:
+                    self.frames = personJumpLeftSG[:2]
             else:
-                self.frames = personJump[:1]
+                if weapon == 'm4a1s':
+                    self.frames = personJumpM4[:2]
+                else:
+                    self.frames = personJumpSG[:2]
             if self.jump_count > 0:
                 if self.direction:
-                    self.frames = personJumpLeft[2:3]
+                    if weapon == 'm4a1s':
+                        self.frames = personJumpLeftM4[2:3]
+                    else:
+                        self.frames = personJumpLeftSG[2:3]
                 else:
-                    self.frames = personJump[2:3]
+                    if weapon == 'm4a1s':
+                        self.frames = personJumpM4[2:3]
+                    else:
+                        self.frames = personJumpSG[2:3]
                 if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
                                                  (self.rect[1] // tile_height)) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -287,9 +348,15 @@ def startGame():
                     self.jump_count *= -1
             else:
                 if self.direction:
-                    self.frames = personJumpLeft[3:4]
+                    if weapon == 'm4a1s':
+                        self.frames = personJumpLeftM4[3:4]
+                    else:
+                        self.frames = personJumpLeftSG[3:4]
                 else:
-                    self.frames = personJump[3:4]
+                    if weapon == 'm4a1s':
+                        self.frames = personJumpM4[3:4]
+                    else:
+                        self.frames = personJumpSG[3:4]
                 for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
                                                  i) or
@@ -303,23 +370,31 @@ def startGame():
                     self.rect.y = self.landing
                 self.jump_count -= 1
             if self.jump_count == -10:
-                if self.direction:
-                    self.frames = personJumpLeft[5:]
-                else:
-                    self.frames = personJump[5:]
                 self.if_jump = False
                 self.re20 = True
                 self.rect.y += 35
 
         def fire(self):  # Стрельба
-            sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
-            sound.play()
             if self.direction:
-                self.frames = personFireLeft
+                if weapon == 'm4a1s':
+                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                    sound.play()
+                    self.frames = personFireLeftM4
+                else:
+                    self.frames = personFireLeftSG
             else:
-                self.frames = personFire
-            if self.cur_frame in [2, 4, 6]:  # Стрельба очерядями, в момент соответствующих кадров
-                bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
+                if weapon == 'm4a1s':
+                    self.frames = personFireM4
+                else:
+                    self.frames = personFireSG
+            if weapon == 'm4a1s':
+                if self.cur_frame in [2, 4, 6]:
+                    bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
+            else:
+                self.fireSG = i
+                bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up')
+                bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)
+                bul3 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down')
 
         def update(self, time):
             if self.hp <= 0:
@@ -347,7 +422,7 @@ def startGame():
                     self.landing = 505
                     self.jump_count = 10
                     self.rect.y -= 40
-                elif keys[pygame.K_h] and not running:  # Нажатие клавиши "h" для стрельбы
+                elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1:  # Нажатие клавиши "h" для стрельбы
                     self.fire()
 
                 elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_d]):
@@ -359,9 +434,9 @@ def startGame():
             self.image = self.frames[self.cur_frame - 1]
 
     class Bullet(pygame.sprite.Sprite):  # Класс пуль
-        def __init__(self, x, y, direction_bul):
+        def __init__(self, x, y, direction_bul, UpOrDown=''):
             super().__init__(bullet_sprites)
-            self.x, self.y, self.direction_bul = x, y, direction_bul
+            self.x, self.y, self.direction_bul, self.UpOrDown = x, y, direction_bul, UpOrDown
             self.image = bull  # Изображение пули
             self.rect = self.image.get_rect()
             if direction_bul:  # Проверка направления и смещение координаты появления пули
@@ -370,6 +445,10 @@ def startGame():
 
         def update(self, *args):
             global f
+            if self.UpOrDown == 'up':
+                self.rect.y += 30
+            elif self.UpOrDown == 'down':
+                self.rect.y -= 30
             if not self.direction_bul:
                 if self.rect.x <= 1280:
                     self.rect.x += 60
@@ -380,6 +459,8 @@ def startGame():
                     self.rect.x -= 60
                 else:
                     self.kill()  # Уничтожение пуль вышедших за границы экрана
+            if len(pygame.sprite.spritecollide(self, tile_sprites, False)) >= 1:
+                self.kill()
             if f:
                 self.kill()
             f = False
@@ -685,7 +766,7 @@ def startGame():
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    quit()
+                    running = False
                 if event.type == pygame.USEREVENT:
                     i += 1
                     if i in time_wave:
@@ -693,7 +774,7 @@ def startGame():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         quit()
-                    if event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_SPACE:
                         global dead
                         global wave_count
                         if dead:
@@ -703,6 +784,12 @@ def startGame():
                             kill = 0
                             i = 0
                             startGame()
+                    elif event.key == pygame.K_q:
+                        global weapon
+                        if weapon == 'm4a1s':
+                            weapon = 'ShotGun'
+                        else:
+                            weapon = 'm4a1s'
                     elif event.key == pygame.K_p:  # пауза
                         start_screen('чтобы продолжить')
 
@@ -764,3 +851,6 @@ def startGame():
 
 
 startGame()
+pygame.display.quit()
+pygame.quit()
+sys.exit(0)

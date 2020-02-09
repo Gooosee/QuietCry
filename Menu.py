@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 import Button
 import LoadImage
@@ -62,7 +64,7 @@ while MenuOpen:
         screen.blit(fon, (0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                quit()
+                MenuOpen = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if menu.updateClicked(event.pos) == 'StartSurv':
