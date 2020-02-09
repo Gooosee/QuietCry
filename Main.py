@@ -362,7 +362,7 @@ def startGame():
                                                  i) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                      (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 9) * tile_height + 6
+                        self.landing = (i - 9) * tile_height
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -392,9 +392,10 @@ def startGame():
                     bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
             else:
                 self.fireSG = i
-                bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up')
-                bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)
-                bul3 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down')
+                bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200)
+                bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250)
+                bul3 = Bullet(self.rect.x + 60, self.rect.y + 5, self.direction, '', 250)
+                bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
 
         def update(self, time):
             if self.hp <= 0:
@@ -434,9 +435,10 @@ def startGame():
             self.image = self.frames[self.cur_frame - 1]
 
     class Bullet(pygame.sprite.Sprite):  # Класс пуль
-        def __init__(self, x, y, direction_bul, UpOrDown=''):
+        def __init__(self, x, y, direction_bul, UpOrDown='', rangeB=1240):
             super().__init__(bullet_sprites)
             self.x, self.y, self.direction_bul, self.UpOrDown = x, y, direction_bul, UpOrDown
+            self.rangeB = rangeB
             self.image = bull  # Изображение пули
             self.rect = self.image.get_rect()
             if direction_bul:  # Проверка направления и смещение координаты появления пули
@@ -446,15 +448,19 @@ def startGame():
         def update(self, *args):
             global f
             if self.UpOrDown == 'up':
-                self.rect.y += 30
+                self.rect.y += 15
             elif self.UpOrDown == 'down':
-                self.rect.y -= 30
+                self.rect.y -= 15
             if not self.direction_bul:
+                if self.rect.x - self.x >= self.rangeB:
+                    self.kill()
                 if self.rect.x <= 1280:
                     self.rect.x += 60
                 else:
                     self.kill()  # Уничтожение пуль вышедших за границы экрана
             else:
+                if self.x - self.rect.x >= self.rangeB:
+                    self.kill()
                 if self.rect.x >= 0:
                     self.rect.x -= 60
                 else:
