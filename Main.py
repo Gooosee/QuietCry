@@ -30,7 +30,6 @@ class Particle(pygame.sprite.Sprite):
     def __init__(self, pos, dx, dy):
         super().__init__(particle_sprites)
         self.a = random.randint(5, 15)
-        print(self.a)
         self.image = pygame.Surface([self.a, self.a])
         self.image.fill([50, 0, 0])
         self.rect = pygame.Rect(pos[0], pos[1], self.a, self.a)
@@ -379,7 +378,7 @@ def startGame():
                     self.re20 = True
                     stop = False
                 self.jump_count -= 1
-            if self.jump_count == -10:
+            if self.jump_count == -10 and stop:
                 self.if_jump = False
                 self.re20 = True
                 self.rect.y += 35
