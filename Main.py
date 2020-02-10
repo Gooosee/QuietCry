@@ -244,7 +244,7 @@ def startGame():
             self.re20 = False
             self.pos_y = y
             self.sdvig = False
-            self.landing = 505  # координата приземления при запрыгивание на платформу
+            self.landing = 855  # координата приземления при запрыгивание на платформу
             self.if_jump = False
             self.direction = False
             self.cur_frame = 0  # Номер кадра
@@ -276,7 +276,7 @@ def startGame():
                                                      self.rect[0] // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                          (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
-                            self.rect.y = (i - 4) * tile_height
+                            self.rect.y = (i - 4) * tile_height - 2
                             break
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction = False  # Персонаж смотрит вправо
@@ -299,7 +299,7 @@ def startGame():
                                                      (self.rect[0] + 20) // tile_width, i) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                          (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 4) * tile_height
+                            self.rect.y = (i - 4) * tile_height - 2
                             break
 
         def stop(self):  # Отсутствие движения
@@ -315,6 +315,7 @@ def startGame():
                     self.frames = personStopSG
 
         def jump(self):  # Прыжок
+            stop = True
             if self.direction:
                 if weapon == 'm4a1s':
                     self.frames = personJumpLeftM4[:2]
@@ -337,16 +338,22 @@ def startGame():
                     else:
                         self.frames = personJumpSG[2:3]
                 if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
-                                                 (self.rect[1] // tile_height)) or
+                                                 (self.rect[1] // tile_height) - 1) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // tile_width,
-                                                 (self.rect[1] // tile_height))):
+                                                 (self.rect[1] // tile_height) - 1)):
                     self.rect.y -= self.jump_count ** 2 // 2
                     self.jump_count -= 1
                 else:
-                    self.jump_count += 1
-                    self.jump_count *= -1
-            else:
+                    if self.jump_count != 10:
+                        self.jump_count += 1
+                        self.jump_count *= -1
+                    else:
+                        self.rect.y = self.landing - 55
+                        stop = False
+                        self.if_jump = False
+                        self.re20 = True
+            elif stop:
                 if self.direction:
                     if weapon == 'm4a1s':
                         self.frames = personJumpLeftM4[3:4]
@@ -357,17 +364,20 @@ def startGame():
                         self.frames = personJumpM4[3:4]
                     else:
                         self.frames = personJumpSG[3:4]
-                for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
-                                                 i) or
+                                                 x) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 9) * tile_height
+                                                     (self.rect[0] + self.rect[2]) // tile_width, x)):
+                        self.landing = (x - 9) * tile_height + 6
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
                 else:
-                    self.rect.y = self.landing
+                    self.rect.y = self.landing + 35
+                    self.if_jump = False
+                    self.re20 = True
+                    stop = False
                 self.jump_count -= 1
             if self.jump_count == -10:
                 self.if_jump = False
@@ -384,6 +394,8 @@ def startGame():
                     self.frames = personFireLeftSG
             else:
                 if weapon == 'm4a1s':
+                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                    sound.play()
                     self.frames = personFireM4
                 else:
                     self.frames = personFireSG
@@ -420,7 +432,7 @@ def startGame():
             if not self.if_jump:
                 if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
                     self.if_jump = True
-                    self.landing = 505
+                    self.landing = self.rect.y
                     self.jump_count = 10
                     self.rect.y -= 40
                 elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1:  # Нажатие клавиши "h" для стрельбы
@@ -763,7 +775,7 @@ def startGame():
     tile_width = 64
     tile_height = 20  # размер клетки
 
-    pers = Person(305, 850)  # Начальное положение персонажа
+    pers = Person(305, 855)  # Начальное положение персонажа
 
     def main():  # главная функция
         global time_wave, i, kill
