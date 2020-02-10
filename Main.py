@@ -687,6 +687,10 @@ def startGame():
                     part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
                 kill += 1
+            if self.rect.x <= 0:
+                self.direction = False
+            elif self.rect.x >= 1180:
+                self.direction = True
             if self.rect.y < pers.rect.y:
                 self.upper_run()
             elif (self.rect.y - 45) > pers.rect.y:
