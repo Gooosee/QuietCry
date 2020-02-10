@@ -631,6 +631,7 @@ def startGame():
             pers.hp -= 10
 
         def jump(self):  # Прыжок
+            stop = True
             if self.direction:
                 self.frames = enemyAJumpLeft[:1]
             else:
@@ -641,16 +642,16 @@ def startGame():
                 else:
                     self.frames = enemyAJump[2:3]
                 if not (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
-                                                 (self.rect[1] // tile_height)) or
+                                                 (self.rect[1] // tile_height) - 1) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // tile_width,
-                                                 (self.rect[1] // tile_height))):
+                                                 (self.rect[1] // tile_height) - 1)):
                     self.rect.y -= self.jump_count ** 2 // 2
                     self.jump_count -= 1
                 else:
                     self.jump_count += 1
                     self.jump_count *= -1
-            else:
+            elif stop:
                 if self.direction:
                     self.frames = enemyAJumpLeft[2:3]
                 else:
@@ -665,16 +666,19 @@ def startGame():
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
                 else:
-                    self.rect.y = self.landing
+                    self.rect.y = self.landing + 100
+                    stop = False
+                    self.if_jump = False
+                    self.re20 = True
                 self.jump_count -= 1
-            if self.jump_count == -10:
+            if self.jump_count == -10 and stop:
                 if self.direction:
                     self.frames = enemyAJumpLeft[4:]
                 else:
                     self.frames = enemyAJump[4:]
                 self.if_jump = False
                 self.re20 = True
-                self.rect.y += 105
+                self.rect.y += 100
 
         def update(self):
             global f, kill
@@ -697,6 +701,7 @@ def startGame():
                 elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                     self.if_jump = True
                     self.jump_count = 10
+                    self.landing = self.rect.y
             else:
                 self.jump()
             if len(pygame.sprite.spritecollide(self, bullet_sprites, False)) >= 1:
