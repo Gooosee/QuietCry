@@ -16,6 +16,7 @@ tile_sprites = pygame.sprite.Group()
 bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
+aid_sprites = pygame.sprite.Group()
 kill = 0  # количество убитых монстров
 wave_count = 0  # Номер волны
 i = 0  # Счетчик для таймера
@@ -187,6 +188,8 @@ def startGame():
                    'plat_u1': LoadImage.load_image('plat_up1.png', 'data'),
                    'plat_u2': LoadImage.load_image('plat_up2.png', 'data'),
                    'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
+
+    aid_kid = LoadImage.load_image('aid_kid.png', 'data')
 
     bull = LoadImage.load_image('bullet.png', 'data')
 
@@ -686,6 +689,12 @@ def startGame():
                     part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
                 self.kill()
                 kill += 1
+                aid_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0, 0])  # выпадение аптечки
+                if aid_chance:
+                    if pers.rect.y < height // 2:
+                        Aid(910)
+                    else:
+                        Aid(330)
             if self.rect.x <= 0:
                 self.direction = False
             elif self.rect.x >= 1180:
@@ -737,6 +746,18 @@ def startGame():
                 en = EnemyA(1280, -10 - yyr)
                 yyr += 40
 
+    class Aid(pygame.sprite.Sprite):
+        def __init__(self, pos_y):
+            super().__init__(aid_sprites)
+            self.image = aid_kid
+            self.rect = self.image.get_rect()
+            self.rect = self.rect.move(width // 2 - 30, pos_y)
+
+        def update(self):
+            if pers.rect.x + 60 > self.rect.x > pers.rect.x - 60 and pers.rect.y + 54 == self.rect.y:
+                pers.hp += 50
+                self.kill()
+
     class Tile(pygame.sprite.Sprite):
         def __init__(self, tile_type, pos_x, pos_y):
             super().__init__(tile_sprites, all_sprites)
@@ -779,7 +800,7 @@ def startGame():
     tile_width = 64
     tile_height = 20  # размер клетки
 
-    pers = Person(305, 855)  # Начальное положение персонажа
+    pers = Person(305, 856)  # Начальное положение персонажа
 
     def main():  # главная функция
         global time_wave, i, kill
@@ -807,6 +828,8 @@ def startGame():
                             dead = False
                             for y in enemy_sprites:
                                 enemy_sprites.remove(y)  # удаление ненужных элементов
+                            for y in aid_sprites:
+                                aid_sprites.remove(y)
                             kill = 0
                             i = 0
                             startGame()
@@ -832,13 +855,15 @@ def startGame():
                 text2 = font.render(f"Счёт: {kill * 50 + i}", True, [100, 100, 100])
                 # Вывести сделанную картинку на экран в точке (300, 300)
                 screen.blit(text1, [50, 30])
-                screen.blit(text2, [50, 100])
+                screen.blit(text2, [50, 80])
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
+                aid_sprites.draw(screen)
                 tile_sprites.draw(screen)
                 particle_sprites.draw(screen)
                 enemy_sprites.draw(screen)  # Отображение всех спрайтов
                 person_sprites.update(i)
+                aid_sprites.update()
                 bullet_sprites.update()
                 enemy_sprites.update()
                 particle_sprites.update()
@@ -849,11 +874,13 @@ def startGame():
                     screen.blit(fon, (0, 0, 1280, 1024))
                     person_sprites.draw(screen)
                     bullet_sprites.draw(screen)
+                    aid_sprites.draw(screen)
                     tile_sprites.draw(screen)
                     particle_sprites.draw(screen)
                     enemy_sprites.draw(screen)  # Отображение всех спрайтов
                     person_sprites.update(i)
                     bullet_sprites.update()
+                    aid_sprites.update()
                     enemy_sprites.update()
                     particle_sprites.update()
                     iWave = None
