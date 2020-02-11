@@ -749,12 +749,16 @@ def startGame():
     class Aid(pygame.sprite.Sprite):
         def __init__(self, pos_y):
             super().__init__(aid_sprites)
+            global i
             self.image = aid_kid
             self.rect = self.image.get_rect()
             self.rect = self.rect.move(width // 2 - 30, pos_y)
+            self.time = i
 
         def update(self):
-            if pers.rect.x + 60 > self.rect.x > pers.rect.x - 60 and pers.rect.y + 54 == self.rect.y:
+            if self.time + 14 < i:
+                self.kill()
+            if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1:
                 pers.hp += 50
                 self.kill()
 
