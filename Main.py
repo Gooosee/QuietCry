@@ -688,14 +688,11 @@ def startGame():
             if self.hp <= 0:
                 for _ in range(20):  # Создание частиц
                     part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
-                self.kill()
-                kill += 1
                 aid_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0, 0])  # выпадение аптечки
                 if aid_chance:
-                    if pers.rect.y < height // 2:
-                        Aid(910)
-                    else:
-                        Aid(330)
+                    Aid(self.rect.x, self.rect.y + 37, self.if_jump)
+                self.kill()
+                kill += 1
             if self.rect.x <= 0:
                 self.direction = False
             elif self.rect.x >= 1180:
@@ -748,15 +745,35 @@ def startGame():
                 yyr += 40
 
     class Aid(pygame.sprite.Sprite):
-        def __init__(self, pos_y):
+        def __init__(self, pos_x, pos_y, if_jump):
             super().__init__(aid_sprites)
             global i
             self.image = aid_kid
             self.rect = self.image.get_rect()
-            self.rect = self.rect.move(width // 2 - 30, pos_y)
+            self.rect = self.rect.move(pos_x, pos_y)
             self.time = i
+            self.jump_count = 0
+            self.landing = 915
+            self.if_jump = if_jump
+
+        def fall(self):
+            for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                             x) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // tile_width, x)):
+                    self.landing = (x - 2) * tile_height + 10
+                    break
+            if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
+                self.rect.y += self.jump_count ** 2 // 2
+            else:
+                self.rect.y = self.landing
+                self.if_jump = False
+            self.jump_count += 1
 
         def update(self):
+            if self.if_jump:
+                self.fall()
             if self.time + 14 < i:
                 self.kill()
             if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1:
