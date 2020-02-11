@@ -199,6 +199,7 @@ def start():
     weapon = 'm4a1s'
     pers = Person(305, 856)  # Начальное положение персонажа
 
+
 def start_screen(frase):  # заставка
     delay = 0  # задержка для мигания надписи
     text1 = "Quiet Cry"
@@ -262,6 +263,9 @@ class Person(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(self.pos_x, self.pos_y)
         self.soundTime = -99
+        self.tm = -6
+        self.shop_size_m4 = 25
+        self.shop_size_sg = 8
 
     def run(self, keys):  # Бег
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -396,31 +400,53 @@ class Person(pygame.sprite.Sprite):
     def fire(self):  # Стрельба
         if self.direction:
             if weapon == 'm4a1s':
-                sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
-                sound.play()
-                self.frames = personFireLeftM4
+                if self.shop_size_m4 > 0:
+                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                    sound.play()
+                    self.frames = personFireLeftM4
             else:
-                sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
-                sound.play()
-                self.frames = personFireLeftSG
+                if self.shop_size_sg > 0:
+                    sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
+                    sound.play()
+                    self.frames = personFireLeftSG
         else:
             if weapon == 'm4a1s':
-                sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
-                sound.play()
-                self.frames = personFireM4
+                if self.shop_size_m4 > 0:
+                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                    sound.play()
+                    self.frames = personFireM4
             else:
-                sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
-                sound.play()
-                self.frames = personFireSG
+                if self.shop_size_sg > 0:
+                    sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
+                    sound.play()
+                    self.frames = personFireSG
         if weapon == 'm4a1s':
-            if self.cur_frame in [2, 4, 6]:
-                bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
+            if self.shop_size_m4 > 0:
+                if self.cur_frame in [2, 4, 6]:
+                    bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
+                    self.shop_size_m4 -= 1
         else:
-            self.fireSG = i
-            bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200)
-            bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250)
-            bul3 = Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250)
-            bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
+            if self.shop_size_sg > 0:
+                self.fireSG = i
+                bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200)
+                bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250)
+                bul3 = Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250)
+                bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
+                self.shop_size_sg -= 1
+                sound = pygame.mixer.Sound('sounds\shotgun_dop.wav')  # звуки стрельбы
+                sound.play()
+        print(self.shop_size_m4, self.shop_size_sg)
+
+    def reload(self):
+        if weapon == 'm4a1s':
+            sound = pygame.mixer.Sound('sounds\preload_m4.wav')
+            sound.play()
+            self.shop_size_m4 = 25
+        else:
+            for _ in range(2):
+                sound = pygame.mixer.Sound('sounds\preload_sg.wav')
+                sound.play()
+            self.shop_size_sg = 8
 
     def update(self, time):
         if self.hp <= 0:
@@ -449,9 +475,11 @@ class Person(pygame.sprite.Sprite):
                 self.landing = self.rect.y
                 self.jump_count = 10
                 self.rect.y -= 40
-            elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1:  # Нажатие клавиши "h" для стрельбы
+            elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1 and self.tm + 4 <= i:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
-
+            elif keys[pygame.K_r] and not running:
+                self.tm = i
+                self.reload()
             elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_d]):
                 self.stop()  # отсутствие движения
         else:
@@ -883,9 +911,6 @@ def shop():
                 but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
 
         pygame.display.flip()
-
-
-
 
 
 def main():  # главная функция
