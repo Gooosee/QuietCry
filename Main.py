@@ -1,6 +1,7 @@
 import random
 import sys
 
+import Button
 import pygame
 from random import choice
 import LoadImage
@@ -185,6 +186,18 @@ aid_kid = LoadImage.load_image('aid_kid.png', 'data')
 
 bull = LoadImage.load_image('bullet.png', 'data')
 
+
+def start():
+    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg
+    money = 0
+    sg = False
+    kill = 0  # количество убитых монстров
+    wave_count = 0  # Номер волны
+    i = 0  # Счетчик для таймера
+    textWave = None  # Текст для вывода волны
+    iWave = None  # Время в которое начала показываться надпись с волной
+    weapon = 'm4a1s'
+    pers = Person(305, 856)  # Начальное положение персонажа
 
 def start_screen(frase):  # заставка
     delay = 0  # задержка для мигания надписи
@@ -406,7 +419,7 @@ class Person(pygame.sprite.Sprite):
             self.fireSG = i
             bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200)
             bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250)
-            bul3 = Bullet(self.rect.x + 60, self.rect.y + 5, self.direction, '', 250)
+            bul3 = Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250)
             bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
 
     def update(self, time):
@@ -462,9 +475,9 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
     def update(self, *args):
         global f
         if self.UpOrDown == 'up':
-            self.rect.y += 15
+            self.rect.y += 5
         elif self.UpOrDown == 'down':
-            self.rect.y -= 15
+            self.rect.y -= 5
         if not self.direction_bul:
             if self.rect.x - self.x >= self.rangeB:
                 self.kill()
@@ -832,6 +845,8 @@ tile_height = 20  # размер клетки
 
 
 def shop():
+    pospos = (0, 0)
+    but_buy_SG = Button.Button(922, 354, 100, 40)
     shopping = True
     shopim = LoadImage.load_image('shop.png', 'data')
     screen.blit(shopim, (0, 0, 1280, 1024))
@@ -842,21 +857,35 @@ def shop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     shopping = False
-        shopim = pygame.transform.scale(LoadImage.load_image('shop.png', 'data'), (width, height))
-        screen.blit(shopim, (0, 0, 1280, 1024))
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
+                        global sg, money
+                        if money >= 150 and not sg:
+                            money -= 150
+                            sg = True
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
+
+            elif event.type == pygame.MOUSEMOTION:
+                if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
+                    pass
+                else:
+                    but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
+
+                pospos = event.pos
+
+            if but_buy_SG.clicked(pospos, LoadImage.load_image('buySGa.png', 'data')):
+                pass
+            else:
+                but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
+
         pygame.display.flip()
 
 
-def start():
-    global kill, wave_count, i, textWave, iWave, weapon, money, pers
-    money = 0
-    kill = 0  # количество убитых монстров
-    wave_count = 0  # Номер волны
-    i = 0  # Счетчик для таймера
-    textWave = None  # Текст для вывода волны
-    iWave = None  # Время в которое начала показываться надпись с волной
-    weapon = 'm4a1s'
-    pers = Person(305, 856)  # Начальное положение персонажа
+
 
 
 def main():  # главная функция
@@ -892,7 +921,7 @@ def main():  # главная функция
                         start()
                 elif event.key == pygame.K_q:
                     global weapon
-                    if weapon == 'm4a1s':
+                    if weapon == 'm4a1s' and sg:
                         weapon = 'ShotGun'
                     else:
                         weapon = 'm4a1s'
