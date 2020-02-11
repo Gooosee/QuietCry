@@ -477,7 +477,7 @@ class Person(pygame.sprite.Sprite):
                 self.rect.y -= 40
             elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1 and self.tm + 4 <= i:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
-            elif keys[pygame.K_r] and not running:
+            elif keys[pygame.K_r] and not running and self.tm + 4 <= i:
                 self.tm = i
                 self.reload()
             elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_d]):
