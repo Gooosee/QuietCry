@@ -770,7 +770,7 @@ def startGame():
             self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
 
     class Platforms(pygame.sprite.Sprite):
-        def load_level(self, filename):
+        def load_level(filename):
             filename = "data/" + filename
             # читаем уровень, убирая символы перевода строки
             with open(filename, 'r') as mapFile:
@@ -782,7 +782,7 @@ def startGame():
             # дополняем каждую строку пустыми клетками ('.')
             return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
-        def generate_level(self, level, x=None, y=None):
+        def generate_level(level, x=None, y=None):
             if x == None and y == None:  # отрисовка уровня
                 for y in range(len(level)):
                     for x in range(len(level[y])):
