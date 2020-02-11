@@ -268,17 +268,17 @@ def startGame():
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2] - 20) // tile_width,
                                              (self.rect[1] + self.rect[3]) // tile_height)
-                    and not (self.if_jump)) and self.rect.x > 1:
+                    and not self.if_jump) and self.rect.x > 1:
                     self.rect.x -= 10  # Смещение влево
                 elif self.if_jump and self.rect.x > 1:
                     self.rect.x -= 10
                 elif self.rect.x > 1:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     self.rect[0] // tile_width, i) or
+                                                     self.rect[0] // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
-                            self.rect.y = (i - 4) * tile_height - 2
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, x)):
+                            self.rect.y = (x - 4) * tile_height - 2
                             break
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.direction = False  # Персонаж смотрит вправо
@@ -291,17 +291,17 @@ def startGame():
                     Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + self.rect[2]) // tile_width,
                                              (self.rect[1] + self.rect[3]) // tile_height)
-                    and not (self.if_jump)) and (self.rect.x + self.rect[2]) < width - 6:
+                    and not self.if_jump) and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10  # Смещение вправо
                 elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
                     self.rect.x += 10
                 elif (self.rect.x + self.rect[2]) < width - 6:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // tile_width, i) or
+                                                     (self.rect[0] + 20) // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 4) * tile_height - 2
+                                                         (self.rect[0] + self.rect[2]) // tile_width, x)):
+                            self.rect.y = (x - 4) * tile_height - 2
                             break
 
         def stop(self):  # Отсутствие движения
@@ -494,6 +494,7 @@ def startGame():
             self.pos_y = y
             self.running = False
             self.if_jump = False
+            self.jump_count = 10
             self.frames = enemyARun  # Анимация стоя
             self.cur_frame = 0  # Номер кадра
             self.image = enemyARun[self.cur_frame]  # Изображение спрайта
@@ -512,17 +513,17 @@ def startGame():
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2] - 20) // tile_width,
                                                  (self.rect[1] + self.rect[3]) // tile_height)
-                        and not (self.if_jump)):
+                        and not self.if_jump):
                     self.rect.x -= 6
                 elif self.if_jump:
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     self.rect[0] // tile_width, i) or
+                                                     self.rect[0] // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             elif pers.rect.x > self.rect.x:
@@ -532,17 +533,17 @@ def startGame():
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // tile_width,
                                                  (self.rect[1] + self.rect[3]) // tile_height)
-                        and not (self.if_jump)):
+                        and not self.if_jump):
                     self.rect.x += 6  # Смещение вправо
                 elif self.if_jump:
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // tile_width, i) or
+                                                     (self.rect[0] + 20) // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height - 6
+                                                         (self.rect[0] + self.rect[2]) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height - 6
                             break
                 self.direction = False  # Монстр смотрит вправо
 
@@ -556,12 +557,12 @@ def startGame():
                                                  (self.rect[1] + self.rect[3]) // tile_height)):
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     self.rect[0] // tile_width, i) or
+                                                     self.rect[0] // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height - 6
+                                                         (self.rect[0] + self.rect[2]) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height - 6
                             break  # Смещение влево
                 self.direction = True
             else:
@@ -574,12 +575,12 @@ def startGame():
                                                  (self.rect[1] + self.rect[3]) // tile_height)):
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0]) // tile_width, i) or
+                                                     (self.rect[0]) // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height - 6
+                                                         (self.rect[0] + self.rect[2]) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height - 6
                             break
                 self.direction = False
 
@@ -591,17 +592,17 @@ def startGame():
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2] - 20) // tile_width,
                                                  (self.rect[1] + self.rect[3]) // tile_height)
-                        and not (self.if_jump)):
+                        and not self.if_jump):
                     self.rect.x -= 6
                 elif self.if_jump:
                     self.rect.x -= 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     self.rect[0] // tile_width, i) or
+                                                     self.rect[0] // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height - 6
+                                                         (self.rect[0] + self.rect[2] - 20) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height - 6
                             break  # Смещение влево
                 self.direction = True  # Персонаж смотрит влево
             else:
@@ -611,17 +612,17 @@ def startGame():
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // tile_width,
                                                  (self.rect[1] + self.rect[3]) // tile_height)
-                        and not (self.if_jump)):
+                        and not self.if_jump):
                     self.rect.x += 6  # Смещение вправо
                 elif self.if_jump:
                     self.rect.x += 6
                 else:
-                    for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                    for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                         if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + 20) // tile_width, i) or
+                                                     (self.rect[0] + 20) // tile_width, x) or
                                 Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                         (self.rect[0] + self.rect[2]) // tile_width, i)):
-                            self.rect.y = (i - 3) * tile_height - 6
+                                                         (self.rect[0] + self.rect[2]) // tile_width, x)):
+                            self.rect.y = (x - 3) * tile_height - 6
                             break
                 self.direction = False  # Монстр смотрит вправо
 
@@ -658,12 +659,12 @@ def startGame():
                     self.frames = enemyAJumpLeft[2:3]
                 else:
                     self.frames = enemyAJump[2:3]
-                for i in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
-                                                 i) or
+                                                 x) or
                             Platforms.generate_level(Platforms.load_level('first_level.txt'),
-                                                     (self.rect[0] + self.rect[2]) // tile_width, i)):
-                        self.landing = (i - 9) * tile_height + 3
+                                                     (self.rect[0] + self.rect[2]) // tile_width, x)):
+                        self.landing = (x - 9) * tile_height + 3
                         break
                 if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                     self.rect.y += self.jump_count ** 2 // 2
@@ -708,7 +709,7 @@ def startGame():
                 self.running = True  # Враг бежит
             if not self.if_jump:
                 if abs(self.rect.x - pers.rect.x) <= 70 and abs(
-                        - pers.rect.y + self.rect.y) <= 50 and not (self.running):  #
+                        - pers.rect.y + self.rect.y) <= 50 and not self.running:  #
                     self.kick()
                 elif - pers.rect.y + self.rect.y > 150:  # Нажат прыжок
                     self.if_jump = True
@@ -769,7 +770,7 @@ def startGame():
             self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
 
     class Platforms(pygame.sprite.Sprite):
-        def load_level(filename):
+        def load_level(self, filename):
             filename = "data/" + filename
             # читаем уровень, убирая символы перевода строки
             with open(filename, 'r') as mapFile:
@@ -781,7 +782,7 @@ def startGame():
             # дополняем каждую строку пустыми клетками ('.')
             return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
-        def generate_level(level, x=None, y=None):
+        def generate_level(self, level, x=None, y=None):
             if x == None and y == None:  # отрисовка уровня
                 for y in range(len(level)):
                     for x in range(len(level[y])):
