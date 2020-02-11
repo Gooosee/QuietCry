@@ -14,7 +14,6 @@ pygame.mixer.music.play(1)
 size = width, height = 1280, 1024
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 # загрузка спрайтов
-money = 0
 f = True
 time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 105, 120, 135, 150, 165, 190]
 dead = False  # Проверка на смерть персонажа
@@ -26,12 +25,6 @@ bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 aid_sprites = pygame.sprite.Group()
-kill = 0  # количество убитых монстров
-wave_count = 0  # Номер волны
-i = 0  # Счетчик для таймера
-textWave = None  # Текст для вывода волны
-iWave = None  # Время в которое начала показываться надпись с волной
-weapon = 'm4a1s'
 
 
 class Particle(pygame.sprite.Sprite):
@@ -837,11 +830,8 @@ class Platforms(pygame.sprite.Sprite):
 tile_width = 64
 tile_height = 20  # размер клетки
 
-pers = Person(305, 856)  # Начальное положение персонажа
-
 
 def shop():
-    print(1)
     shopping = True
     shopim = LoadImage.load_image('shop.png', 'data')
     screen.blit(shopim, (0, 0, 1280, 1024))
@@ -857,7 +847,7 @@ def shop():
         pygame.display.flip()
 
 
-def restart():
+def start():
     global kill, wave_count, i, textWave, iWave, weapon, money, pers
     money = 0
     kill = 0  # количество убитых монстров
@@ -899,7 +889,7 @@ def main():  # главная функция
                             aid_sprites.remove(y)
                         kill = 0
                         i = ii = 0
-                        restart()
+                        start()
                 elif event.key == pygame.K_q:
                     global weapon
                     if weapon == 'm4a1s':
@@ -968,6 +958,7 @@ def main():  # главная функция
         pygame.display.flip()
 
 
+start()
 main()
 
 pygame.display.quit()
