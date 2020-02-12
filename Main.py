@@ -828,8 +828,10 @@ class Aid(pygame.sprite.Sprite):
             self.fall()
         if self.time + 14 < i:
             self.kill()
-        if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1:
-            pers.hp += 50
+        if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1 and pers.hp < pers.fullHP:
+            pers.hp = pers.hp + 50
+            if pers.hp > pers.fullHP:
+                pers.hp = pers.fullHP
             self.kill()
 
 
@@ -912,11 +914,17 @@ def shop():
                     else:
                         but_green_plus.draw(screen, LoadImage.load_image('butPlusGreenNA.png', 'data'))
                     if but_green_minus.clicked(event.pos, LoadImage.load_image('butMinusGreenA.png', 'data')):
+                        if power >= 1:
+                            money += 25 * (power + 1)
+                            power -= 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
                     else:
                         but_green_minus.draw(screen, LoadImage.load_image('butMinusGreenNA.png', 'data'))
                     if but_blue_minus.clicked(event.pos, LoadImage.load_image('butMinusBlueA.png', 'data')):
+                        if speed >= 1:
+                            money += 25 * (speed + 1)
+                            speed -= 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
                     else:
@@ -931,16 +939,25 @@ def shop():
                     else:
                         but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
                     if but_red_plus.clicked(event.pos, LoadImage.load_image('butPlusRedA.png', 'data')):
+                        if HP < 4 and money >= 50 * (HP + 1):
+                            money -= 50 * (HP + 1)
+                            HP += 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
                     else:
                         but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
                     if but_blue_plus.clicked(event.pos, LoadImage.load_image('butPlusBlueA.png', 'data')):
+                        if speed < 4 and money >= 50 * (speed + 1):
+                            money -= 50 * (speed + 1)
+                            speed += 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
                     else:
                         but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
                     if but_red_minus.clicked(event.pos, LoadImage.load_image('butMinusRedA.png', 'data')):
+                        if HP >= 1:
+                            money += 25 * (HP + 1)
+                            HP -= 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
                     else:
@@ -1009,11 +1026,11 @@ def shop():
             screen.blit(sq, [1286 - 40 - 75 * (sp + 1), 675, 75, 40])
         for pow in range(4 - power):
             screen.blit(sq, [1286 - 40 - 75 * (pow + 1), 785, 75, 40])
-        pers.fullHP += HP * 25
+        pers.fullHP = 200 + HP * 25
         pers.hp = pers.fullHP
-        pers.speed += speed * 2
+        pers.speed = 10 + speed * 2
         global Power
-        Power += power * 3
+        Power = 10 + power * 3
         pygame.display.flip()
 
 
