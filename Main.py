@@ -26,6 +26,7 @@ bullet_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 aid_sprites = pygame.sprite.Group()
+coin_sprites = pygame.sprite.Group()
 
 
 class Particle(pygame.sprite.Sprite):
@@ -183,6 +184,8 @@ tile_images = {'plat_d1': LoadImage.load_image('plat_down1.png', 'data'),
                'plat_u3': LoadImage.load_image('plat_up3.png', 'data')}
 
 aid_kid = LoadImage.load_image('aid_kid.png', 'data')
+
+coin = LoadImage.load_image('coin1.png', 'data')
 
 bull = LoadImage.load_image('bullet.png', 'data')
 
@@ -712,12 +715,12 @@ class EnemyA(pygame.sprite.Sprite):
                                              x) or
                         Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                                  (self.rect[0] + self.rect[2]) // tile_width, x)):
-                    self.landing = (x - 9) * tile_height + 3
+                    self.landing = (x - 9) * tile_height - 15
                     break
             if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
                 self.rect.y += self.jump_count ** 2 // 2
             else:
-                self.rect.y = self.landing + 100
+                self.rect.y = self.landing + 105
                 stop = False
                 self.if_jump = False
                 self.re20 = True
@@ -738,9 +741,12 @@ class EnemyA(pygame.sprite.Sprite):
             money += 10
             for _ in range(20):  # Создание частиц
                 part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
-            aid_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0, 0])  # выпадение аптечки
+            aid_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0, 0])  # шанс выпадения аптечки
+            coin_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0])  # шанс выпадения монеты
             if aid_chance:
                 Aid(self.rect.x, self.rect.y + 37, self.if_jump)
+            elif coin_chance:
+                Coin(self.rect.x, self.rect.y + 37, self.if_jump)
             self.kill()
             kill += 1
         if self.rect.x <= 0:
@@ -829,9 +835,51 @@ class Aid(pygame.sprite.Sprite):
         if self.time + 14 < i:
             self.kill()
         if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1 and pers.hp < pers.fullHP:
+            sound = pygame.mixer.Sound('sounds/pick_up_aid.wav')
+            sound.play()
             pers.hp = pers.hp + 50
             if pers.hp > pers.fullHP:
                 pers.hp = pers.fullHP
+            self.kill()
+
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, if_jump):
+        super().__init__(aid_sprites)
+        global i
+        self.image = coin
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(pos_x, pos_y)
+        self.time = i
+        self.jump_count = 0
+        self.landing = 915
+        self.if_jump = if_jump
+
+    def fall(self):
+        for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+            if (Platforms.generate_level(Platforms.load_level('first_level.txt'), self.rect[0] // tile_width,
+                                         x) or
+                    Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + self.rect[2]) // tile_width, x)):
+                self.landing = (x - 2) * tile_height + 10
+                break
+        if self.rect.y + self.jump_count ** 2 // 2 <= self.landing:
+            self.rect.y += self.jump_count ** 2 // 2
+        else:
+            self.rect.y = self.landing
+            self.if_jump = False
+        self.jump_count += 1
+
+    def update(self):
+        global money
+        if self.if_jump:
+            self.fall()
+        if self.time + 14 < i:
+            self.kill()
+        if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1:
+            money += 30
+            sound = pygame.mixer.Sound('sounds/coin.wav')
+            sound.play()
             self.kill()
 
 
@@ -935,8 +983,8 @@ def shop():
                         if money >= 150 and not sg:
                             money -= 150
                             sg = True
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                            soundBut1 = pygame.mixer.Sound('sounds/buy_sg.wav')  # звук кнопки 1
+                            soundBut1.play()
                     else:
                         but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
                     if but_red_plus.clicked(event.pos, LoadImage.load_image('butPlusRedA.png', 'data')):
@@ -1095,9 +1143,11 @@ def main():  # главная функция
             bullet_sprites.draw(screen)
             aid_sprites.draw(screen)
             tile_sprites.draw(screen)
+            coin_sprites.draw(screen)
             particle_sprites.draw(screen)
             enemy_sprites.draw(screen)  # Отображение всех спрайтов
             person_sprites.update(i)
+            coin_sprites.update()
             aid_sprites.update()
             bullet_sprites.update()
             enemy_sprites.update()
@@ -1110,11 +1160,13 @@ def main():  # главная функция
                 person_sprites.draw(screen)
                 bullet_sprites.draw(screen)
                 aid_sprites.draw(screen)
+                coin_sprites.draw(screen)
                 tile_sprites.draw(screen)
                 particle_sprites.draw(screen)
                 enemy_sprites.draw(screen)  # Отображение всех спрайтов
                 person_sprites.update(i)
                 bullet_sprites.update()
+                coin_sprites.update()
                 aid_sprites.update()
                 enemy_sprites.update()
                 particle_sprites.update()
