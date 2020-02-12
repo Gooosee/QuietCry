@@ -188,7 +188,7 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg
+    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power
     money = 0
     sg = False
     kill = 0  # количество убитых монстров
@@ -198,6 +198,10 @@ def start():
     iWave = None  # Время в которое начала показываться надпись с волной
     weapon = 'm4a1s'
     pers = Person(305, 856)  # Начальное положение персонажа
+    HP = 0
+    speed = 0
+    power = 0
+    Power = 10
 
 
 def start_screen(frase):  # заставка
@@ -248,7 +252,8 @@ class Person(pygame.sprite.Sprite):
         super().__init__(person_sprites)
         # Начальные координаты персонажа
         self.pos_x = x
-        self.hp = 150
+        self.fullHP = 200
+        self.hp = 200
         self.fireSG = 0
         self.jump_count = 10
         self.re20 = False
@@ -266,6 +271,7 @@ class Person(pygame.sprite.Sprite):
         self.tm = -6
         self.shop_size_m4 = 25
         self.shop_size_sg = 8
+        self.speed = 10
 
     def run(self, keys):  # Бег
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
@@ -280,9 +286,9 @@ class Person(pygame.sprite.Sprite):
                                          (self.rect[0] + self.rect[2] - 20) // tile_width,
                                          (self.rect[1] + self.rect[3]) // tile_height)
                 and not self.if_jump) and self.rect.x > 1:
-                self.rect.x -= 10  # Смещение влево
+                self.rect.x -= self.speed  # Смещение влево
             elif self.if_jump and self.rect.x > 1:
-                self.rect.x -= 10
+                self.rect.x -= self.speed
             elif self.rect.x > 1:
                 for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -303,9 +309,9 @@ class Person(pygame.sprite.Sprite):
                                          (self.rect[0] + self.rect[2]) // tile_width,
                                          (self.rect[1] + self.rect[3]) // tile_height)
                 and not self.if_jump) and (self.rect.x + self.rect[2]) < width - 6:
-                self.rect.x += 10  # Смещение вправо
+                self.rect.x += self.speed # Смещение вправо
             elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
-                self.rect.x += 10
+                self.rect.x += self.speed
             elif (self.rect.x + self.rect[2]) < width - 6:
                 for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                     if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
@@ -759,7 +765,7 @@ class EnemyA(pygame.sprite.Sprite):
         else:
             self.jump()
         if len(pygame.sprite.spritecollide(self, bullet_sprites, False)) >= 1:
-            self.hp -= 10
+            self.hp -= Power
             f = True
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
@@ -873,12 +879,22 @@ tile_height = 20  # размер клетки
 
 
 def shop():
+    global HP, speed, power
+    sq = LoadImage.load_image('square.png', 'data')
     pospos = (0, 0)
     but_buy_SG = Button.Button(922, 354, 100, 40)
+    but_red_plus = Button.Button(1200, 630, 27, 27)
+    but_red_minus = Button.Button(900, 630, 27, 27)
+    but_blue_plus = Button.Button(1200, 740, 27, 27)
+    but_blue_minus = Button.Button(900, 740, 27, 27)
+    but_green_plus = Button.Button(1200, 850, 27, 27)
+    but_green_minus = Button.Button(900, 850, 27, 27)
     shopping = True
     shopim = LoadImage.load_image('shop.png', 'data')
     screen.blit(shopim, (0, 0, 1280, 1024))
+    global sg, money
     while shopping:
+        pygame.time.delay(100)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
@@ -887,8 +903,26 @@ def shop():
                     shopping = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
+                        if power < 4 and money >= 50 * (power + 1):
+                            money -= 50 * (power + 1)
+                            power += 1
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_green_plus.draw(screen, LoadImage.load_image('butPlusGreenNA.png', 'data'))
+                    if but_green_minus.clicked(event.pos, LoadImage.load_image('butMinusGreenA.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_green_minus.draw(screen, LoadImage.load_image('butMinusGreenNA.png', 'data'))
+                    if but_blue_minus.clicked(event.pos, LoadImage.load_image('butMinusBlueA.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_blue_minus.draw(screen, LoadImage.load_image('butMinusBlueNA.png', 'data'))
                     if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
-                        global sg, money
+
                         if money >= 150 and not sg:
                             money -= 150
                             sg = True
@@ -896,20 +930,90 @@ def shop():
                         soundBut1.play()
                     else:
                         but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
-
+                    if but_red_plus.clicked(event.pos, LoadImage.load_image('butPlusRedA.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
+                    if but_blue_plus.clicked(event.pos, LoadImage.load_image('butPlusBlueA.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
+                    if but_red_minus.clicked(event.pos, LoadImage.load_image('butMinusRedA.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
             elif event.type == pygame.MOUSEMOTION:
+                if but_blue_minus.clicked(event.pos, LoadImage.load_image('butMinusBlueA.png', 'data')):
+                    pass
+                else:
+                    but_blue_minus.draw(screen, LoadImage.load_image('butMinusBlueNA.png', 'data'))
+                if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
+                    pass
+                else:
+                    but_green_plus.draw(screen, LoadImage.load_image('butPlusGreenNA.png', 'data'))
+                if but_green_minus.clicked(event.pos, LoadImage.load_image('butMinusGreenA.png', 'data')):
+                    pass
+                else:
+                    but_green_minus.draw(screen, LoadImage.load_image('butMinusGreenNA.png', 'data'))
+                if but_blue_plus.clicked(event.pos, LoadImage.load_image('butPlusBlueA.png', 'data')):
+                    pass
+                else:
+                    but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
                 if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
                     pass
                 else:
                     but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
-
+                if but_red_plus.clicked(event.pos, LoadImage.load_image('butPlusRedA.png', 'data')):
+                    pass
+                else:
+                    but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
+                if but_red_minus.clicked(event.pos, LoadImage.load_image('butMinusRedA.png', 'data')):
+                    pass
+                else:
+                    but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
                 pospos = event.pos
-
+            if but_blue_minus.clicked(pospos, LoadImage.load_image('butMinusBlueA.png', 'data')):
+                pass
+            else:
+                but_blue_minus.draw(screen, LoadImage.load_image('butMinusBlueNA.png', 'data'))
+            if but_green_plus.clicked(pospos, LoadImage.load_image('butPlusGreenA.png', 'data')):
+                pass
+            else:
+                but_green_plus.draw(screen, LoadImage.load_image('butPlusGreenNA.png', 'data'))
+            if but_green_minus.clicked(pospos, LoadImage.load_image('butMinusGreenA.png', 'data')):
+                pass
+            else:
+                but_green_minus.draw(screen, LoadImage.load_image('butMinusGreenNA.png', 'data'))
+            if but_red_minus.clicked(pospos, LoadImage.load_image('butMinusRedA.png', 'data')):
+                pass
+            else:
+                but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
+            if but_blue_plus.clicked(pospos, LoadImage.load_image('butPlusBlueA.png', 'data')):
+                pass
+            else:
+                but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
             if but_buy_SG.clicked(pospos, LoadImage.load_image('buySGa.png', 'data')):
                 pass
             else:
                 but_buy_SG.draw(screen, LoadImage.load_image('buySGna.png', 'data'))
-
+            if but_red_plus.clicked(pospos, LoadImage.load_image('butPlusRedA.png', 'data')):
+                pass
+            else:
+                but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
+        for h in range(4 - HP):
+            screen.blit(sq, [1286 - 40 - 75 * (h + 1), 575, 75, 40])
+        for sp in range(4 - speed):
+            screen.blit(sq, [1286 - 40 - 75 * (sp + 1), 675, 75, 40])
+        for pow in range(4 - power):
+            screen.blit(sq, [1286 - 40 - 75 * (pow + 1), 785, 75, 40])
+        pers.fullHP += HP * 25
+        pers.hp = pers.fullHP
+        pers.speed += speed * 2
+        global Power
+        Power += power * 3
         pygame.display.flip()
 
 
