@@ -907,6 +907,7 @@ def shop():
                 if event.button == 1:
                     if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
                         if power < 4 and money >= 50 * (power + 1):
+                            screen.blit(shopim, (0, 0, 1280, 1024))
                             money -= 50 * (power + 1)
                             power += 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
@@ -941,6 +942,7 @@ def shop():
                     if but_red_plus.clicked(event.pos, LoadImage.load_image('butPlusRedA.png', 'data')):
                         if HP < 4 and money >= 50 * (HP + 1):
                             money -= 50 * (HP + 1)
+                            screen.blit(shopim, (0, 0, 1280, 1024))
                             HP += 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
                         soundBut1.play()
@@ -948,6 +950,7 @@ def shop():
                         but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
                     if but_blue_plus.clicked(event.pos, LoadImage.load_image('butPlusBlueA.png', 'data')):
                         if speed < 4 and money >= 50 * (speed + 1):
+                            screen.blit(shopim, (0, 0, 1280, 1024))
                             money -= 50 * (speed + 1)
                             speed += 1
                         soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
