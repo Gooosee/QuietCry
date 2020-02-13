@@ -753,9 +753,9 @@ class EnemyA(pygame.sprite.Sprite):
             self.direction = False
         elif self.rect.x >= 1180:
             self.direction = True
-        if self.rect.y < pers.rect.y:
+        if self.rect.y < pers.rect.y and not self.if_jump:
             self.upper_run()
-        elif (self.rect.y - 45) > pers.rect.y:
+        elif (self.rect.y - 45) > pers.rect.y and not self.if_jump:
             self.lower_run()
         elif abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
             self.run()
