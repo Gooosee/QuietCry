@@ -753,9 +753,9 @@ class EnemyA(pygame.sprite.Sprite):
             self.direction = False
         elif self.rect.x >= 1180:
             self.direction = True
-        if self.rect.y < pers.rect.y and not self.if_jump:
+        if self.rect.y < pers.rect.y:
             self.upper_run()
-        elif (self.rect.y - 45) > pers.rect.y and not self.if_jump:
+        elif (self.rect.y - 45) > pers.rect.y:
             self.lower_run()
         elif abs(self.rect.x - pers.rect.x) > 70:  # Персонаж вне зоны досягаемости
             self.run()
@@ -935,7 +935,7 @@ res5 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 5").fetcha
 
 def leaderboard(kill):
     global res1, res2, res3, res4, res5, win
-    if kill > res3:
+    if kill >= res3:
         if kill >= res1:
             res5 = res4
             res4 = res3
@@ -1142,7 +1142,7 @@ def shop():
 
 
 def main():  # главная функция
-    global time_wave, i, kill
+    global time_wave, i, kill, res1, res2, res3, res4, res5
     level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
     clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # Таймер с переодичностью в секунду
@@ -1184,6 +1184,8 @@ def main():  # главная функция
                     start_screen('чтобы продолжить')
                 elif event.key == pygame.K_b:
                     shop()
+                elif event.key == pygame.K_TAB:
+                    res1, res2, res3, res4, res5 = 1, 1, 1, 1, 1
         fon = LoadImage.load_image('fon_b.png', 'data')
         global iWave
         if not dead:
@@ -1247,13 +1249,13 @@ def main():  # главная функция
                     if label == 1:
                         lb = font.render("Вы заняли первое место", True, [255, 255, 0])
                     elif label == 2:
-                        lb = font.render("Вы заняли второе место", True, [255, 255, 0])
+                        lb = font.render("Вы заняли второе место", True, [197, 201, 199])
                     elif label == 3:
-                        lb = font.render("Вы заняли третие место", True, [255, 255, 0])
+                        lb = font.render("Вы заняли третие место", True, [205, 127, 50])
                     elif label == 4:
-                        lb = font.render("Вы заняли четвёртое место", True, [255, 255, 0])
+                        lb = font.render("Вы заняли четвёртое место", True, [0, 255, 0])
                     else:
-                        lb = font.render("Вы заняли пятое место", True, [255, 255, 0])
+                        lb = font.render("Вы заняли пятое место", True, [0, 255, 0])
                     screen.blit(lb, [160, 50])
                 font = pygame.font.Font(None, 50)
                 l1 = font.render('1. ' + str(a), True, [0, 0, 0])
