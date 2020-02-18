@@ -1,6 +1,6 @@
 import random
+import sqlite3
 import sys
-
 import Button
 import pygame
 from random import choice
@@ -191,7 +191,7 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power
+    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
     money = 0
     sg = False
     kill = 0  # количество убитых монстров
@@ -201,6 +201,7 @@ def start():
     iWave = None  # Время в которое начала показываться надпись с волной
     weapon = 'm4a1s'
     pers = Person(305, 856)  # Начальное положение персонажа
+    win = 0
     HP = 0
     speed = 0
     power = 0
@@ -444,7 +445,6 @@ class Person(pygame.sprite.Sprite):
                 self.shop_size_sg -= 1
                 sound = pygame.mixer.Sound('sounds\shotgun_dop.wav')  # звуки стрельбы
                 sound.play()
-        print(self.shop_size_m4, self.shop_size_sg)
 
     def reload(self):
         if weapon == 'm4a1s':
@@ -924,6 +924,58 @@ class Platforms(pygame.sprite.Sprite):
                 return False
 
 
+con = sqlite3.connect('table.db')
+cur = con.cursor()
+res1 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 1").fetchall()[0])[1:-2])
+res2 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 2").fetchall()[0])[1:-2])
+res3 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 3").fetchall()[0])[1:-2])
+res4 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 4").fetchall()[0])[1:-2])
+res5 = int(str(cur.execute("SELECT result FROM leaderboard WHERE id = 5").fetchall()[0])[1:-2])
+
+
+def leaderboard(kill):
+    global res1, res2, res3, res4, res5, win
+    if kill >= res3:
+        if kill >= res1:
+            res5 = res4
+            res4 = res3
+            res3 = res2
+            res2 = res1
+            res1 = kill
+            win = 1
+        elif kill >= res2:
+            res5 = res4
+            res4 = res3
+            res3 = res2
+            res2 = kill
+            win = 2
+        else:
+            res5 = res4
+            res4 = res3
+            res3 = kill
+            win = 3
+    else:
+        if kill >= res4:
+            res5 = res4
+            res4 = kill
+            win = 4
+        elif kill >= res5:
+            res5 = kill
+            win = 5
+    cur.execute("UPDATE leaderboard SET result = ? WHERE id = 1",
+                (str(res1),))
+    cur.execute("UPDATE leaderboard SET result = ? WHERE id = 2",
+                (str(res2),))
+    cur.execute("UPDATE leaderboard SET result = ? WHERE id = 3",
+                (str(res3),))
+    cur.execute("UPDATE leaderboard SET result = ? WHERE id = 4",
+                (str(res4),))
+    cur.execute("UPDATE leaderboard SET result = ? WHERE id = 5",
+                (str(res5),))
+    con.commit()
+    return res1, res2, res3, res4, res5, win
+
+
 tile_width = 64
 tile_height = 20  # размер клетки
 
@@ -933,6 +985,12 @@ def shop():
     HPup = False
     sq = LoadImage.load_image('square.png', 'data')
     pospos = (0, 0)
+    but_on1 = Button.Button(270, 200, 120, 62)
+    but_on2 = Button.Button(270, 350, 120, 62)
+    but_on3 = Button.Button(270, 500, 120, 62)
+    but_off1 = Button.Button(470, 200, 120, 62)
+    but_off2 = Button.Button(470, 350, 120, 62)
+    but_off3 = Button.Button(470, 500, 120, 62)
     but_buy_SG = Button.Button(922, 354, 100, 40)
     but_red_plus = Button.Button(1200, 630, 27, 27)
     but_red_minus = Button.Button(900, 630, 27, 27)
@@ -954,6 +1012,36 @@ def shop():
                     shopping = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_on1.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_on2.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_off1.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                    if but_off2.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                    if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+                        soundBut1.play()
+                    else:
+                        but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
                         if power < 4 and money >= 50 * (power + 1):
                             screen.blit(shopim, (0, 0, 1280, 1024))
@@ -1044,7 +1132,55 @@ def shop():
                     pass
                 else:
                     but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
+                if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on1.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_on2.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off1.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                if but_off2.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                 pospos = event.pos
+            if but_on1.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on1.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_on2.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on2.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_on3.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on3.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_off1.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off1.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
+            if but_off2.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off2.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
+            if but_off3.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off3.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
             if but_blue_minus.clicked(pospos, LoadImage.load_image('butMinusBlueA.png', 'data')):
                 pass
             else:
@@ -1090,7 +1226,7 @@ def shop():
 
 
 def main():  # главная функция
-    global time_wave, i, kill
+    global time_wave, i, kill, res1, res2, res3, res4, res5
     level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
     clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # Таймер с переодичностью в секунду
@@ -1117,6 +1253,8 @@ def main():  # главная функция
                             enemy_sprites.remove(y)  # удаление ненужных элементов
                         for y in aid_sprites:
                             aid_sprites.remove(y)
+                        for y in coin_sprites:
+                            coin_sprites.remove(y)
                         kill = 0
                         i = ii = 0
                         start()
@@ -1130,6 +1268,8 @@ def main():  # главная функция
                     start_screen('чтобы продолжить')
                 elif event.key == pygame.K_b:
                     shop()
+                elif event.key == pygame.K_TAB:
+                    res1, res2, res3, res4, res5 = 1, 1, 1, 1, 1
         fon = LoadImage.load_image('fon_b.png', 'data')
         global iWave
         if not dead:
@@ -1182,10 +1322,38 @@ def main():  # главная функция
                 text1 = font.render("Умер насмерть(", True, [100, 0, 0])
                 font = pygame.font.Font(None, 65)
                 text2 = font.render("Чтобы начать заново нажмите \"пробел\"", True, [100, 100, 100])
+                text3 = font.render("Таблица рекордов:", True, [0, 0, 150])
                 # Вывести сделанную картинку на экран в точке (300, 300)
-                screen.blit(text1, [360, 400])
-                screen.blit(text2, [200, 530])
+                screen.blit(text1, [360, 200])
+                screen.blit(text2, [200, 330])
+                screen.blit(text3, [360, 430])
+                a, b, c, d, e, label = leaderboard(kill)
+                if label:
+                    font = pygame.font.Font(None, 100)
+                    if label == 1:
+                        lb = font.render("Вы заняли первое место", True, [255, 255, 0])
+                    elif label == 2:
+                        lb = font.render("Вы заняли второе место", True, [197, 201, 199])
+                    elif label == 3:
+                        lb = font.render("Вы заняли третие место", True, [205, 127, 50])
+                    elif label == 4:
+                        lb = font.render("Вы заняли четвёртое место", True, [0, 255, 0])
+                    else:
+                        lb = font.render("Вы заняли пятое место", True, [0, 255, 0])
+                    screen.blit(lb, [160, 50])
+                font = pygame.font.Font(None, 50)
+                l1 = font.render('1. ' + str(a), True, [0, 0, 0])
+                screen.blit(l1, [450, 500])
+                l2 = font.render('2. ' + str(b), True, [0, 0, 0])
+                screen.blit(l2, [450, 550])
+                l3 = font.render('3. ' + str(c), True, [0, 0, 0])
+                screen.blit(l3, [450, 600])
+                l4 = font.render('4. ' + str(d), True, [0, 0, 0])
+                screen.blit(l4, [450, 650])
+                l5 = font.render('5. ' + str(e), True, [0, 0, 0])
+                screen.blit(l5, [450, 700])
                 wave_count = 0
+                kill = 0
         # Обновление спрайтов
         clock.tick(60)
         pygame.time.delay(50)
@@ -1195,6 +1363,7 @@ def main():  # главная функция
 start()
 main()
 
+con.close()
 pygame.display.quit()
 pygame.quit()
 sys.exit(0)
