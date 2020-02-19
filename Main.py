@@ -161,10 +161,11 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    global buul, blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
     blood = True
     soundPlay = True
     money = 0
+    buul = []
     sg = False
     kill = 0  # количество убитых монстров
     wave_count = 0  # Номер волны
@@ -435,18 +436,19 @@ class Person(pygame.sprite.Sprite):
                         sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
                         sound.play()
                     self.frames = personFireSG
+        global buul
         if weapon == 'm4a1s':
             if self.shop_size_m4 > 0:
                 if self.cur_frame in [2, 4, 6]:
-                    bul = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction)  # Создание пули
+                    buul.append(Bullet(self.rect.x + 60, self.rect.y + 36, self.direction))  # Создание пули
                     self.shop_size_m4 -= 1
         else:
             if self.shop_size_sg > 0:
                 self.fireSG = i
-                bul1 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200)
-                bul2 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250)
-                bul3 = Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250)
-                bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
+                buul.append(Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'up', 200))
+                buul.append(Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, '', 250))
+                buul.append(Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250))
+                buul.append(Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200))
                 self.shop_size_sg -= 1
                 if soundPlay:
                     sound = pygame.mixer.Sound('sounds\shotgun_dop.wav')  # звуки стрельбы
@@ -542,9 +544,6 @@ class Bullet(pygame.sprite.Sprite):  # Класс пуль
                 self.kill()  # Уничтожение пуль вышедших за границы экрана
         if len(pygame.sprite.spritecollide(self, tile_sprites, False)) >= 1:
             self.kill()
-        if f:
-            self.kill()
-        f = False
 
 
 class EnemyA(pygame.sprite.Sprite):
@@ -782,9 +781,13 @@ class EnemyA(pygame.sprite.Sprite):
                 self.landing = self.rect.y
         else:
             self.jump()
+        global buul
         if len(pygame.sprite.spritecollide(self, bullet_sprites, False)) >= 1:
-            self.hp -= Power
-            f = True
+            for j in buul:
+                if self.rect.x <= j.rect.x <= self.rect.x + 81 and self.rect.y <= j.rect.y <= self.rect.y + 69:
+                    j.kill()
+                    buul.remove(j)
+                    self.hp -= Power
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
         self.running = False  # Враг стоит
