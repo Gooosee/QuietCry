@@ -191,7 +191,8 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    global soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    soundPlay = True
     money = 0
     sg = False
     kill = 0  # количество убитых монстров
@@ -250,7 +251,7 @@ def start_screen(frase):  # заставка
 
 
 class Person(pygame.sprite.Sprite):
-    global i
+    global i, soundPlay
 
     def __init__(self, x, y):
         super().__init__(person_sprites)
@@ -411,24 +412,28 @@ class Person(pygame.sprite.Sprite):
         if self.direction:
             if weapon == 'm4a1s':
                 if self.shop_size_m4 > 0:
-                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
-                    sound.play()
+                    if soundPlay:
+                        sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                        sound.play()
                     self.frames = personFireLeftM4
             else:
                 if self.shop_size_sg > 0:
-                    sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
-                    sound.play()
+                    if soundPlay:
+                        sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
+                        sound.play()
                     self.frames = personFireLeftSG
         else:
             if weapon == 'm4a1s':
                 if self.shop_size_m4 > 0:
-                    sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
-                    sound.play()
+                    if soundPlay:
+                        sound = pygame.mixer.Sound('sounds\pfire.wav')  # звуки стрельбы
+                        sound.play()
                     self.frames = personFireM4
             else:
                 if self.shop_size_sg > 0:
-                    sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
-                    sound.play()
+                    if soundPlay:
+                        sound = pygame.mixer.Sound('sounds\shootg.wav')  # звуки стрельбы
+                        sound.play()
                     self.frames = personFireSG
         if weapon == 'm4a1s':
             if self.shop_size_m4 > 0:
@@ -443,18 +448,21 @@ class Person(pygame.sprite.Sprite):
                 bul3 = Bullet(self.rect.x + 60, self.rect.y + 20, self.direction, '', 250)
                 bul4 = Bullet(self.rect.x + 60, self.rect.y + 36, self.direction, 'down', 200)
                 self.shop_size_sg -= 1
-                sound = pygame.mixer.Sound('sounds\shotgun_dop.wav')  # звуки стрельбы
-                sound.play()
+                if soundPlay:
+                    sound = pygame.mixer.Sound('sounds\shotgun_dop.wav')  # звуки стрельбы
+                    sound.play()
 
     def reload(self):
         if weapon == 'm4a1s':
-            sound = pygame.mixer.Sound('sounds\preload_m4.wav')
-            sound.play()
+            if soundPlay:
+                sound = pygame.mixer.Sound('sounds\preload_m4.wav')
+                sound.play()
             self.shop_size_m4 = 25
         else:
-            for _ in range(2):
-                sound = pygame.mixer.Sound('sounds\preload_sg.wav')
-                sound.play()
+            if soundPlay:
+                for _ in range(2):
+                    sound = pygame.mixer.Sound('sounds\preload_sg.wav')
+                    sound.play()
             self.shop_size_sg = 8
 
     def update(self, time):
@@ -466,8 +474,9 @@ class Person(pygame.sprite.Sprite):
                 part = Particle([self.rect.x + 50, self.rect.y + 30], random.randint(-8, 8), random.randint(-5, 3))
             self.kill()
         elif self.hp < 50 and time - self.soundTime >= 1:
-            soundBr = pygame.mixer.Sound('sounds/heavyBreathing.wav')  # звук тяжелого дыхания
-            soundBr.play()
+            if soundPlay:
+                soundBr = pygame.mixer.Sound('sounds/heavyBreathing.wav')  # звук тяжелого дыхания
+                soundBr.play()
             self.soundTime = time
         running = False
         keys = pygame.key.get_pressed()  # в этом списке лежат все нажатые кнопки
@@ -878,8 +887,9 @@ class Coin(pygame.sprite.Sprite):
             self.kill()
         if len(pygame.sprite.spritecollide(self, person_sprites, False)) >= 1:
             money += 30
-            sound = pygame.mixer.Sound('sounds/coin.wav')
-            sound.play()
+            if soundPlay:
+                sound = pygame.mixer.Sound('sounds/coin.wav')
+                sound.play()
             self.kill()
 
 
@@ -980,6 +990,12 @@ tile_width = 64
 tile_height = 20  # размер клетки
 
 
+def clickButton():
+    if soundPlay:
+        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
+        soundBut1.play()
+
+
 def shop():
     global HP, speed, power
     HPup = False
@@ -1001,9 +1017,9 @@ def shop():
     shopping = True
     shopim = LoadImage.load_image('shop.png', 'data')
     screen.blit(shopim, (0, 0, 1280, 1024))
-    global sg, money
+    global sg, money, soundPlay
     while shopping:
-        pygame.time.delay(100)
+        pygame.time.delay(300)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
@@ -1013,33 +1029,32 @@ def shop():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
+                        soundPlay = True
                     else:
                         but_on1.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
                     if but_on2.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
+                        pygame.mixer.music.load('sounds\music.mp3')
+                        pygame.mixer.music.play(100000)
                     else:
                         but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
                     if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
                     if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
+                        soundPlay = False
                     else:
                         but_off1.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_off2.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
+                        pygame.mixer.music.stop()
                     else:
                         but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
@@ -1047,24 +1062,21 @@ def shop():
                             screen.blit(shopim, (0, 0, 1280, 1024))
                             money -= 50 * (power + 1)
                             power += 1
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_green_plus.draw(screen, LoadImage.load_image('butPlusGreenNA.png', 'data'))
                     if but_green_minus.clicked(event.pos, LoadImage.load_image('butMinusGreenA.png', 'data')):
                         if power >= 1:
                             money += 25 * power
                             power -= 1
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_green_minus.draw(screen, LoadImage.load_image('butMinusGreenNA.png', 'data'))
                     if but_blue_minus.clicked(event.pos, LoadImage.load_image('butMinusBlueA.png', 'data')):
                         if speed >= 1:
                             money += 25 * speed
                             speed -= 1
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_blue_minus.draw(screen, LoadImage.load_image('butMinusBlueNA.png', 'data'))
                     if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
@@ -1082,8 +1094,7 @@ def shop():
                             screen.blit(shopim, (0, 0, 1280, 1024))
                             HP += 1
                             HPup = True
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
                     if but_blue_plus.clicked(event.pos, LoadImage.load_image('butPlusBlueA.png', 'data')):
@@ -1091,16 +1102,14 @@ def shop():
                             screen.blit(shopim, (0, 0, 1280, 1024))
                             money -= 50 * speed
                             speed += 1
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
                     if but_red_minus.clicked(event.pos, LoadImage.load_image('butMinusRedA.png', 'data')):
                         if HP >= 1:
                             money += 25 * (HP + 1)
                             HP -= 1
-                        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-                        soundBut1.play()
+                        clickButton()
                     else:
                         but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
             elif event.type == pygame.MOUSEMOTION:
