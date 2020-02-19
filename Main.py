@@ -12,6 +12,7 @@ pygame.init()
 pygame.mixer.music.load('sounds\music.mp3')
 pygame.mixer.music.play(100000)
 # создание окна
+blood = True
 size = width, height = 1280, 1024
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 # загрузка спрайтов
@@ -27,35 +28,6 @@ enemy_sprites = pygame.sprite.Group()
 particle_sprites = pygame.sprite.Group()
 aid_sprites = pygame.sprite.Group()
 coin_sprites = pygame.sprite.Group()
-
-
-class Particle(pygame.sprite.Sprite):
-    # сгенерируем частицы разного размера
-
-    def __init__(self, pos, dx, dy):
-        super().__init__(particle_sprites)
-        self.a = random.randint(5, 15)
-        self.image = pygame.Surface([self.a, self.a])
-        self.image.fill([50, 0, 0])
-        self.rect = pygame.Rect(pos[0], pos[1], self.a, self.a)
-
-        # у каждой частицы своя скорость — это вектор
-        self.velocity = [dx, dy]
-        # и свои координаты
-
-        # гравитация будет одинаковой (значение константы)
-        self.gravity = 5
-
-    def update(self):
-        # применяем гравитационный эффект:
-        # движение с ускорением под действием гравитации
-        self.velocity[1] += self.gravity
-        # перемещаем частицу
-        self.rect.x += self.velocity[0]
-        self.rect.y += self.velocity[1]
-        # убиваем, если частица ушла за экран
-        if len(pygame.sprite.spritecollide(self, tile_sprites, False)) >= 1:
-            self.kill()
 
 
 personRunM4 = [LoadImage.load_image('anim1_person_run_m4a1s.png', 'data'),
@@ -191,7 +163,8 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    global blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    blood = True
     soundPlay = True
     money = 0
     sg = False
@@ -207,6 +180,35 @@ def start():
     speed = 0
     power = 0
     Power = 10
+
+
+class Particle(pygame.sprite.Sprite):
+    # сгенерируем частицы разного размера
+
+    def __init__(self, pos, dx, dy):
+        super().__init__(particle_sprites)
+        self.a = random.randint(5, 15)
+        self.image = pygame.Surface([self.a, self.a])
+        self.image.fill([50, 0, 0])
+        self.rect = pygame.Rect(pos[0], pos[1], self.a, self.a)
+
+        # у каждой частицы своя скорость — это вектор
+        self.velocity = [dx, dy]
+        # и свои координаты
+
+        # гравитация будет одинаковой (значение константы)
+        self.gravity = 5
+
+    def update(self):
+        # применяем гравитационный эффект:
+        # движение с ускорением под действием гравитации
+        self.velocity[1] += self.gravity
+        # перемещаем частицу
+        self.rect.x += self.velocity[0]
+        self.rect.y += self.velocity[1]
+        # убиваем, если частица ушла за экран
+        if len(pygame.sprite.spritecollide(self, tile_sprites, False)) >= 1:
+            self.kill()
 
 
 def start_screen(frase):  # заставка
@@ -470,8 +472,10 @@ class Person(pygame.sprite.Sprite):
             global dead, money
             dead = True
             money = 0
-            for _ in range(30):  # Создание частиц крови
-                part = Particle([self.rect.x + 50, self.rect.y + 30], random.randint(-8, 8), random.randint(-5, 3))
+            global blood
+            if blood:
+                for _ in range(30):  # Создание частиц крови
+                        part = Particle([self.rect.x + 50, self.rect.y + 30], random.randint(-8, 8), random.randint(-5, 3))
             self.kill()
         elif self.hp < 50 and time - self.soundTime >= 1:
             if soundPlay:
@@ -748,8 +752,9 @@ class EnemyA(pygame.sprite.Sprite):
         if self.hp <= 0:
             global money
             money += 10
-            for _ in range(20):  # Создание частиц
-                part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
+            if blood:
+                for _ in range(20):  # Создание частиц
+                    part = Particle([self.rect.x + 50, self.rect.y + 20], random.randint(-8, 8), random.randint(-5, 3))
             aid_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0, 0])  # шанс выпадения аптечки
             coin_chance = random.choice([1, 0, 0, 0, 0, 0, 0, 0])  # шанс выпадения монеты
             if aid_chance:
@@ -997,7 +1002,7 @@ def clickButton():
 
 
 def shop():
-    global HP, speed, power
+    global HP, speed, power, blood
     HPup = False
     sq = LoadImage.load_image('square.png', 'data')
     pospos = (0, 0)
@@ -1041,6 +1046,7 @@ def shop():
                         but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
                     if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
                         clickButton()
+                        blood = True
                     else:
                         but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
                     if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
@@ -1055,6 +1061,7 @@ def shop():
                         but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
                         clickButton()
+                        blood = False
                     else:
                         but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                     if but_green_plus.clicked(event.pos, LoadImage.load_image('butPlusGreenA.png', 'data')):
