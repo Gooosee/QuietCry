@@ -1022,6 +1022,10 @@ def gameInterface():
                     [140, 1005, 108 // pers.fullBul * pers.shop, 12])
 
     screen.blit(interf, [0, 0, 1280, 1024])
+    if weapon == 'm4a1s':
+        screen.blit(LoadImage.load_image('m4inter.png', 'data'), [15, 965, 108, 40])
+    else:
+        screen.blit(LoadImage.load_image('sginter.png', 'data'), [15, 965, 108, 40])
 
 
 def shop():
