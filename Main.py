@@ -257,6 +257,8 @@ class Person(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__(person_sprites)
         # Начальные координаты персонажа
+        self.fullBul = 25
+        self.shop = 25
         self.pos_x = x
         self.fullHP = 200
         self.hp = 200
@@ -506,7 +508,12 @@ class Person(pygame.sprite.Sprite):
                 self.stop()  # отсутствие движения
         else:
             self.jump()
-
+        if weapon == 'm4a1s':
+            self.fullBul = 25
+            self.shop = self.shop_size_m4
+        else:
+            self.shop = self.shop_size_sg
+            self.fullBul = 8
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame - 1]
 
@@ -1002,6 +1009,21 @@ def clickButton():
         soundBut1.play()
 
 
+def gameInterface():
+    back = LoadImage.load_image('back_interf.png', 'data')
+    interf = LoadImage.load_image('interface.png', 'data')
+    hpI = LoadImage.load_image('hp.png', 'data')
+    bulI = LoadImage.load_image('bullets.png', 'data')
+    screen.blit(back, [0, 0, 1280, 1024])
+    if pers.hp > 0:
+        screen.blit(pygame.transform.scale(hpI, (round(108 / pers.fullHP * pers.hp), 12)), [140, 965, 108 // pers.fullHP * pers.hp, 12])
+    if pers.shop > 0:
+        screen.blit(pygame.transform.scale(bulI, (round(108 / pers.fullBul * pers.shop), 12)),
+                    [140, 1005, 108 // pers.fullBul * pers.shop, 12])
+
+    screen.blit(interf, [0, 0, 1280, 1024])
+
+
 def shop():
     global HP, speed, power, blood
     HPup = False
@@ -1295,10 +1317,8 @@ def main():  # главная функция
             if iWave is not None:
                 if i - iWave <= 2:
                     screen.blit(textWave, [520, 200])
-            text1 = font.render(f"Здоровье: {pers.hp}", True, [0, 0, 0])
             font = pygame.font.Font(None, 50)
             text2 = font.render(f"Баланс: {money}", True, [100, 100, 100])
-            screen.blit(text1, [50, 30])
             screen.blit(text2, [50, 80])
             person_sprites.draw(screen)
             bullet_sprites.draw(screen)
@@ -1313,6 +1333,7 @@ def main():  # главная функция
             bullet_sprites.update()
             enemy_sprites.update()
             particle_sprites.update()
+            gameInterface()
         else:
             if ii == 0:
                 ii = i
@@ -1331,6 +1352,7 @@ def main():  # главная функция
                 aid_sprites.update()
                 enemy_sprites.update()
                 particle_sprites.update()
+                gameInterface()
                 iWave = None
                 wave_count = 0
             else:
@@ -1371,10 +1393,12 @@ def main():  # главная функция
                 screen.blit(l5, [450, 700])
                 wave_count = 0
                 kill = 0
+
         # Обновление спрайтов
         clock.tick(60)
-        pygame.time.delay(50)
+        #pygame.time.delay(50)
         pygame.display.flip()
+
 
 class Menu:
     def __init__(self):
