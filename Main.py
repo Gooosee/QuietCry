@@ -317,7 +317,7 @@ class Person(pygame.sprite.Sprite):
                                          (self.rect[0] + self.rect[2]) // tile_width,
                                          (self.rect[1] + self.rect[3]) // tile_height)
                 and not self.if_jump) and (self.rect.x + self.rect[2]) < width - 6:
-                self.rect.x += self.speed # Смещение вправо
+                self.rect.x += self.speed  # Смещение вправо
             elif self.if_jump and (self.rect.x + self.rect[2]) < width - 6:
                 self.rect.x += self.speed
             elif (self.rect.x + self.rect[2]) < width - 6:
@@ -767,6 +767,9 @@ class EnemyA(pygame.sprite.Sprite):
                 Coin(self.rect.x, self.rect.y + 37, self.if_jump)
             self.kill()
             kill += 1
+        if self.hp < 40:
+            pygame.draw.line(screen, (255, 0, 0), (self.rect.x, self.rect.y),
+                             (self.rect.x + 2 * self.hp, self.rect.y), 7)
         if self.rect.x <= 0:
             self.direction = False
         elif self.rect.x >= 1180:
@@ -1312,7 +1315,7 @@ def main():  # главная функция
                 elif event.key == pygame.K_b:
                     shop()
                 elif event.key == pygame.K_TAB:
-                    res1, res2, res3, res4, res5 = 1, 1, 1, 1, 1
+                    res1, res2, res3, res4, res5 = 0, 0, 0, 0, 0
         fon = LoadImage.load_image('fon_b.png', 'data')
         global iWave
         if not dead:
@@ -1378,7 +1381,7 @@ def main():  # главная функция
                     elif label == 2:
                         lb = font.render("Вы заняли второе место", True, [197, 201, 199])
                     elif label == 3:
-                        lb = font.render("Вы заняли третие место", True, [205, 127, 50])
+                        lb = font.render("Вы заняли третье место", True, [205, 127, 50])
                     elif label == 4:
                         lb = font.render("Вы заняли четвёртое место", True, [0, 255, 0])
                     else:
@@ -1396,7 +1399,7 @@ def main():  # главная функция
                 l5 = font.render('5. ' + str(e), True, [0, 0, 0])
                 screen.blit(l5, [450, 700])
                 wave_count = 0
-                kill = 0
+                kill = -1
 
         # Обновление спрайтов
         clock.tick(60)
