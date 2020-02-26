@@ -1502,6 +1502,7 @@ while MenuOpen:
 # Загрузка музыки
 pygame.mixer.music.load('sounds\music.mp3')
 pygame.mixer.music.play(100000)
+pygame.mixer.music.set_volume(0.5)
 start()
 main()
 
