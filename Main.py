@@ -13,6 +13,7 @@ pygame.init()
 blood = True
 size = width, height = 1280, 1024
 screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
+pygame.display.set_caption('QuietCry')
 # загрузка спрайтов
 f = True
 time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 105, 120, 135, 150, 165, 190]
