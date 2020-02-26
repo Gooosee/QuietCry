@@ -193,8 +193,6 @@ class Particle(pygame.sprite.Sprite):
 
         # у каждой частицы своя скорость — это вектор
         self.velocity = [dx, dy]
-        # и свои координаты
-
         # гравитация будет одинаковой (значение константы)
         self.gravity = 5
 
@@ -1036,6 +1034,7 @@ def shop():
     HPup = False
     sq = LoadImage.load_image('square.png', 'data')
     pospos = (0, 0)
+    dontdaung = True
     but_on1 = Button.Button(270, 200, 120, 62)
     but_on2 = Button.Button(270, 350, 120, 62)
     but_on3 = Button.Button(270, 500, 120, 62)
@@ -1061,6 +1060,8 @@ def shop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     shopping = False
+                    if dontdaung:
+                        pers.hp = pers.fullHP
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
@@ -1131,6 +1132,7 @@ def shop():
                             screen.blit(shopim, (0, 0, 1280, 1024))
                             HP += 1
                             HPup = True
+                            dontdaung = True
                         clickButton()
                     else:
                         but_red_plus.draw(screen, LoadImage.load_image('butPlusRedNA.png', 'data'))
@@ -1144,8 +1146,9 @@ def shop():
                         but_blue_plus.draw(screen, LoadImage.load_image('butPlusBlueNA.png', 'data'))
                     if but_red_minus.clicked(event.pos, LoadImage.load_image('butMinusRedA.png', 'data')):
                         if HP >= 1:
-                            money += 25 * (HP + 1)
+                            money += 25 * HP
                             HP -= 1
+                            dontdaung = False
                         clickButton()
                     else:
                         but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
@@ -1263,7 +1266,7 @@ def shop():
             screen.blit(sq, [1286 - 40 - 75 * (pow + 1), 785, 75, 40])
         if HPup:
             pers.fullHP = 200 + HP * 25
-            pers.hp = pers.fullHP
+
             HPup = False
         pers.speed = 10 + speed * 2
         global Power
@@ -1403,7 +1406,6 @@ def main():  # главная функция
 
         # Обновление спрайтов
         clock.tick(60)
-        #pygame.time.delay(50)
         pygame.display.flip()
 
 
