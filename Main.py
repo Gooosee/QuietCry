@@ -277,6 +277,7 @@ class Person(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.pos_x, self.pos_y)
         self.soundTime = -99
         self.tm = -6
+        self.tm_jump = -6
         self.shop_size_m4 = 25
         self.shop_size_sg = 8
         self.speed = 10
@@ -410,6 +411,14 @@ class Person(pygame.sprite.Sprite):
             self.if_jump = False
             self.re20 = True
             self.rect.y += 35
+            print(self.rect.x, self.rect.y)
+            for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
+                if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                             (self.rect[0] + 20) // tile_width, x) or
+                        Platforms.generate_level(Platforms.load_level('first_level.txt'),
+                                                 (self.rect[0] + self.rect[2]) // tile_width, x)):
+                    self.rect.y = (x - 7) * tile_height + 3
+                    break
 
     def fire(self):  # Стрельба
         if self.direction:
@@ -494,14 +503,15 @@ class Person(pygame.sprite.Sprite):
             self.run(keys)
             running = True
         if not self.if_jump:
-            if keys[pygame.K_UP] or keys[pygame.K_w]:  # Нажат прыжок
+            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:  # Нажат прыжок
+                self.tm_jump = i
                 self.if_jump = True
                 self.landing = self.rect.y
                 self.jump_count = 10
                 self.rect.y -= 40
             elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1 and self.tm + 4 <= i:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
-            elif keys[pygame.K_r] and not running and self.tm + 4 <= i:
+            elif keys[pygame.K_r] and self.tm + 4 <= i:
                 self.tm = i
                 self.reload()
             elif not (keys[pygame.K_RIGHT] or keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_d]):
@@ -1377,16 +1387,16 @@ def main():  # главная функция
                 if label:
                     font = pygame.font.Font(None, 100)
                     if label == 1:
-                        lb = font.render("Вы заняли первое место", True, [255, 255, 0])
+                        lb = font.render("Вы заняли 1-ое место", True, [255, 255, 0])
                     elif label == 2:
-                        lb = font.render("Вы заняли второе место", True, [197, 201, 199])
+                        lb = font.render("Вы заняли 2-ое место", True, [113, 125, 130])
                     elif label == 3:
-                        lb = font.render("Вы заняли третье место", True, [205, 127, 50])
+                        lb = font.render("Вы заняли 3-ье место", True, [205, 127, 50])
                     elif label == 4:
-                        lb = font.render("Вы заняли четвёртое место", True, [0, 255, 0])
+                        lb = font.render("Вы заняли 4-ое место", True, [0, 0, 0])
                     else:
-                        lb = font.render("Вы заняли пятое место", True, [0, 255, 0])
-                    screen.blit(lb, [160, 50])
+                        lb = font.render("Вы заняли 5-ое место", True, [0, 0, 0])
+                    screen.blit(lb, [265, 50])
                 font = pygame.font.Font(None, 50)
                 l1 = font.render('1. ' + str(a), True, [0, 0, 0])
                 screen.blit(l1, [450, 500])
