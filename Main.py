@@ -162,8 +162,9 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global buul, blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    global buul, running, blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
     blood = True
+    running = False
     soundPlay = True
     money = 0
     buul = []
@@ -410,7 +411,6 @@ class Person(pygame.sprite.Sprite):
             self.if_jump = False
             self.re20 = True
             self.rect.y += 35
-            print(self.rect.x, self.rect.y)
             for x in range((self.rect[1] + self.rect[3]) // tile_height, height // tile_height):
                 if (Platforms.generate_level(Platforms.load_level('first_level.txt'),
                                              (self.rect[0] + 20) // tile_width, x) or
@@ -1041,11 +1041,13 @@ def gameInterface():
 
 
 def shop():
-    global HP, speed, power, blood
+    global HP, speed, power, blood, running
     HPup = False
     sq = LoadImage.load_image('square.png', 'data')
     pospos = (0, 0)
     dontdaung = True
+    but_exit = Button.Button(40, 900, 180, 70)
+    but_back = Button.Button(400, 900, 180, 70)
     but_on1 = Button.Button(270, 200, 120, 62)
     but_on2 = Button.Button(270, 350, 120, 62)
     but_on3 = Button.Button(270, 500, 120, 62)
@@ -1075,6 +1077,26 @@ def shop():
                         pers.hp = pers.fullHP
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
+                    if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                        clickButton()
+                        soundPlay = True
+                        shopping = False
+                        running = False
+                        global person_sprites, all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites
+                        pers.kill()
+                        pers.remove()
+                        for y in [all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites]:
+                            for j in y:
+                                j.kill()
+                                j.remove()
+
+                    else:
+                        but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
+                    if but_back.clicked(event.pos, LoadImage.load_image('butBACK_a.png', 'data')):
+                        shopping = False
+                        clickButton()
+                    else:
+                        but_back.clicked(event.pos, LoadImage.load_image('butBACK_na.png', 'data'))
                     if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
                         clickButton()
                         soundPlay = True
@@ -1129,7 +1151,6 @@ def shop():
                     else:
                         but_blue_minus.draw(screen, LoadImage.load_image('butMinusBlueNA.png', 'data'))
                     if but_buy_SG.clicked(event.pos, LoadImage.load_image('buySGa.png', 'data')):
-
                         if money >= 150 and not sg:
                             money -= 150
                             sg = True
@@ -1159,11 +1180,20 @@ def shop():
                         if HP >= 1:
                             money += 25 * HP
                             HP -= 1
+                            HPup = True
                             dontdaung = False
                         clickButton()
                     else:
                         but_red_minus.draw(screen, LoadImage.load_image('butMinusRedNA.png', 'data'))
             elif event.type == pygame.MOUSEMOTION:
+                if but_back.clicked(event.pos, LoadImage.load_image('butBACK_a.png', 'data')):
+                    pass
+                else:
+                    but_back.clicked(event.pos, LoadImage.load_image('butBACK_na.png', 'data'))
+                if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                    pass
+                else:
+                    but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
                 if but_blue_minus.clicked(event.pos, LoadImage.load_image('butMinusBlueA.png', 'data')):
                     pass
                 else:
@@ -1217,6 +1247,14 @@ def shop():
                 else:
                     but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
                 pospos = event.pos
+            if but_back.clicked(pospos, LoadImage.load_image('butBACK_a.png', 'data')):
+                pass
+            else:
+                but_back.draw(screen, LoadImage.load_image('butBACK_na.png', 'data'))
+            if but_exit.clicked(pospos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                pass
+            else:
+                but_exit.draw(screen, LoadImage.load_image('butEXIT_na.png', 'data'))
             if but_on1.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
                 pass
             else:
@@ -1286,7 +1324,7 @@ def shop():
 
 
 def main():  # главная функция
-    global time_wave, i, kill, res1, res2, res3, res4, res5
+    global time_wave, i, kill, res1, res2, res3, res4, res5, running
     level_x, level_y = Platforms.generate_level(Platforms.load_level('first_level.txt'))
     clock = pygame.time.Clock()
     pygame.time.set_timer(pygame.USEREVENT, 1000)  # Таймер с переодичностью в секунду
@@ -1303,7 +1341,7 @@ def main():  # главная функция
                     wave()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    quit()
+                    shop()
                 elif event.key == pygame.K_SPACE:
                     global dead
                     global wave_count
@@ -1326,8 +1364,6 @@ def main():  # главная функция
                         weapon = 'm4a1s'
                 elif event.key == pygame.K_p:  # пауза
                     start_screen('чтобы продолжить')
-                elif event.key == pygame.K_b:
-                    shop()
                 elif event.key == pygame.K_TAB:
                     res1, res2, res3, res4, res5 = 0, 0, 0, 0, 0
         fon = LoadImage.load_image('fon_b.png', 'data')
@@ -1480,7 +1516,8 @@ while MenuOpen:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if menu.updateClicked(event.pos) == 'StartSurv':
-                        MenuOpen = False
+                        start()
+                        main()
             elif event.type == pygame.MOUSEMOTION:
                 menu.updateNotClicked(event.pos)
                 pospos = event.pos
@@ -1504,8 +1541,7 @@ while MenuOpen:
 pygame.mixer.music.load('sounds\music.mp3')
 pygame.mixer.music.play(100000)
 pygame.mixer.music.set_volume(0.5)
-start()
-main()
+
 
 con.close()
 pygame.display.quit()
