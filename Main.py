@@ -16,6 +16,8 @@ screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 pygame.display.set_caption('QuietCry')
 # загрузка спрайтов
 f = True
+blood = True
+soundPlay = True
 time_wave = [1, 20, 30, 40, 50, 60, 70, 80, 90, 105, 120, 135, 150, 165, 190]
 dead = False  # Проверка на смерть персонажа
 bulletKill = False  # Проверка на нанесение дамага врагу, чтобы не удалить пулю до урона
@@ -162,10 +164,8 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 
 def start():
-    global buul, running, blood, soundPlay, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
-    blood = True
+    global buul, running, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
     running = False
-    soundPlay = True
     money = 0
     buul = []
     sg = False
@@ -1456,6 +1456,128 @@ def main():  # главная функция
         pygame.display.flip()
 
 
+def settings():
+    global blood
+    but_exit = Button.Button(40, 900, 180, 70)
+    but_on1 = Button.Button(270, 200, 120, 62)
+    but_on2 = Button.Button(270, 350, 120, 62)
+    but_on3 = Button.Button(270, 500, 120, 62)
+    but_off1 = Button.Button(470, 200, 120, 62)
+    but_off2 = Button.Button(470, 350, 120, 62)
+    but_off3 = Button.Button(470, 500, 120, 62)
+    settingsO = True
+    settingsim = LoadImage.load_image('settings.png', 'data')
+    screen.blit(settingsim, (0, 0, 1280, 1024))
+    pospos = (0, 0)
+    global soundPlay
+    while settingsO:
+        pygame.time.delay(300)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    settingsO = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                        clickButton()
+                        soundPlay = True
+                        settingsO = False
+                    else:
+                        but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
+                    if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        clickButton()
+                        soundPlay = True
+                    else:
+                        but_on1.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_on2.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        clickButton()
+                        pygame.mixer.music.load('sounds\music.mp3')
+                        pygame.mixer.music.play(100000)
+                    else:
+                        but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                        clickButton()
+                        blood = True
+                    else:
+                        but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                    if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        clickButton()
+                        soundPlay = False
+                    else:
+                        but_off1.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                    if but_off2.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        clickButton()
+                        pygame.mixer.music.stop()
+                    else:
+                        but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                    if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                        clickButton()
+                        blood = False
+                    else:
+                        but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+            elif event.type == pygame.MOUSEMOTION:
+                if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                    pass
+                else:
+                    but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
+                if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on1.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_on2.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on2.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_on3.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
+                    pass
+                else:
+                    but_on3.clicked(event.pos, LoadImage.load_image('but_on_na.png', 'data'))
+                if but_off1.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off1.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                if but_off2.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off2.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                if but_off3.clicked(event.pos, LoadImage.load_image('but_off_a.png', 'data')):
+                    pass
+                else:
+                    but_off3.clicked(event.pos, LoadImage.load_image('but_off_na.png', 'data'))
+                pospos = event.pos
+            if but_exit.clicked(pospos, LoadImage.load_image('butEXIT_a.png', 'data')):
+                pass
+            else:
+                but_exit.draw(screen, LoadImage.load_image('butEXIT_na.png', 'data'))
+            if but_on1.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on1.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_on2.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on2.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_on3.clicked(pospos, LoadImage.load_image('but_on_a.png', 'data')):
+                pass
+            else:
+                but_on3.draw(screen, LoadImage.load_image('but_on_na.png', 'data'))
+            if but_off1.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off1.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
+            if but_off2.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off2.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
+            if but_off3.clicked(pospos, LoadImage.load_image('but_off_a.png', 'data')):
+                pass
+            else:
+                but_off3.draw(screen, LoadImage.load_image('but_off_na.png', 'data'))
+        pygame.display.flip()
+
+
 class Menu:
     def __init__(self):
         self.butNewG = Button.Button(992, 738, 124, 19)
@@ -1475,6 +1597,10 @@ class Menu:
             return 'StartSurv'
         else:
             self.butSurv.draw(screen, LoadImage.load_image('Surv_na.png', 'data'))
+        if self.butSettings.clicked(pos, LoadImage.load_image('Settings_a.png', 'data')):
+            return 'Settings'
+        else:
+            self.butSettings.draw(screen, LoadImage.load_image('Settings_na.png', 'data'))
 
     def updateNotClicked(self, pos):
         if self.butExit.clicked(pos, LoadImage.load_image('Exit_a.png', 'data')):
@@ -1518,6 +1644,8 @@ while MenuOpen:
                     if menu.updateClicked(event.pos) == 'StartSurv':
                         start()
                         main()
+                    if menu.updateClicked(event.pos) == 'Settings':
+                        settings()
             elif event.type == pygame.MOUSEMOTION:
                 menu.updateNotClicked(event.pos)
                 pospos = event.pos
