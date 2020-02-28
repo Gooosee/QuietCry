@@ -165,6 +165,11 @@ bull = LoadImage.load_image('bullet.png', 'data')
 
 def start():
     global buul, running, kill, wave_count, i, textWave, iWave, weapon, money, pers, sg, HP, speed, power, Power, win
+    for y in [person_sprites, all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites,
+              coin_sprites]:
+        for j in y:
+            j.kill()
+            y.remove(j)
     running = False
     money = 0
     buul = []
@@ -1083,12 +1088,13 @@ def shop():
                         shopping = False
                         running = False
                         global person_sprites, all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites
-                        pers.kill()
-                        pers.remove()
-                        for y in [all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites]:
+
+                        for y in [person_sprites, all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites]:
                             for j in y:
                                 j.kill()
                                 j.remove()
+                        global dead
+                        dead = False
 
                     else:
                         but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
@@ -1392,64 +1398,43 @@ def main():  # главная функция
             particle_sprites.update()
             gameInterface()
         else:
-            if ii == 0:
-                ii = i
-            elif i - ii < 3:
-                screen.blit(fon, (0, 0, 1280, 1024))
-                person_sprites.draw(screen)
-                bullet_sprites.draw(screen)
-                aid_sprites.draw(screen)
-                coin_sprites.draw(screen)
-                tile_sprites.draw(screen)
-                particle_sprites.draw(screen)
-                enemy_sprites.draw(screen)  # Отображение всех спрайтов
-                person_sprites.update(i)
-                bullet_sprites.update()
-                coin_sprites.update()
-                aid_sprites.update()
-                enemy_sprites.update()
-                particle_sprites.update()
-                gameInterface()
-                iWave = None
-                wave_count = 0
-            else:
-                screen.blit(fon, (0, 0, 1280, 1024))
-                font = pygame.font.Font(None, 110)
-                text1 = font.render("Умер насмерть(", True, [100, 0, 0])
-                font = pygame.font.Font(None, 65)
-                text2 = font.render("Чтобы начать заново нажмите \"пробел\"", True, [100, 100, 100])
-                text3 = font.render("Таблица рекордов:", True, [0, 0, 150])
-                # Вывести сделанную картинку на экран в точке (300, 300)
-                screen.blit(text1, [360, 200])
-                screen.blit(text2, [200, 330])
-                screen.blit(text3, [360, 430])
-                a, b, c, d, e, label = leaderboard(kill)
-                if label:
-                    font = pygame.font.Font(None, 100)
-                    if label == 1:
-                        lb = font.render("Вы заняли 1-ое место", True, [255, 255, 0])
-                    elif label == 2:
-                        lb = font.render("Вы заняли 2-ое место", True, [113, 125, 130])
-                    elif label == 3:
-                        lb = font.render("Вы заняли 3-ье место", True, [205, 127, 50])
-                    elif label == 4:
-                        lb = font.render("Вы заняли 4-ое место", True, [0, 0, 0])
-                    else:
-                        lb = font.render("Вы заняли 5-ое место", True, [0, 0, 0])
-                    screen.blit(lb, [265, 50])
-                font = pygame.font.Font(None, 50)
-                l1 = font.render('1. ' + str(a), True, [0, 0, 0])
-                screen.blit(l1, [450, 500])
-                l2 = font.render('2. ' + str(b), True, [0, 0, 0])
-                screen.blit(l2, [450, 550])
-                l3 = font.render('3. ' + str(c), True, [0, 0, 0])
-                screen.blit(l3, [450, 600])
-                l4 = font.render('4. ' + str(d), True, [0, 0, 0])
-                screen.blit(l4, [450, 650])
-                l5 = font.render('5. ' + str(e), True, [0, 0, 0])
-                screen.blit(l5, [450, 700])
-                wave_count = 0
-                kill = -1
+            screen.blit(fon, (0, 0, 1280, 1024))
+            font = pygame.font.Font(None, 110)
+            text1 = font.render("Умер насмерть(", True, [100, 0, 0])
+            font = pygame.font.Font(None, 65)
+            text2 = font.render("Чтобы выйти в меню нажмите \"пробел\"", True, [100, 100, 100])
+            text3 = font.render("Таблица рекордов:", True, [0, 0, 150])
+            # Вывести сделанную картинку на экран в точке (300, 300)
+            screen.blit(text1, [360, 200])
+            screen.blit(text2, [200, 330])
+            screen.blit(text3, [360, 430])
+            a, b, c, d, e, label = leaderboard(kill)
+            if label:
+                font = pygame.font.Font(None, 100)
+                if label == 1:
+                    lb = font.render("Вы заняли 1-ое место", True, [255, 255, 0])
+                elif label == 2:
+                    lb = font.render("Вы заняли 2-ое место", True, [113, 125, 130])
+                elif label == 3:
+                    lb = font.render("Вы заняли 3-ье место", True, [205, 127, 50])
+                elif label == 4:
+                    lb = font.render("Вы заняли 4-ое место", True, [0, 0, 0])
+                else:
+                    lb = font.render("Вы заняли 5-ое место", True, [0, 0, 0])
+                screen.blit(lb, [265, 50])
+            font = pygame.font.Font(None, 50)
+            l1 = font.render('1. ' + str(a), True, [0, 0, 0])
+            screen.blit(l1, [450, 500])
+            l2 = font.render('2. ' + str(b), True, [0, 0, 0])
+            screen.blit(l2, [450, 550])
+            l3 = font.render('3. ' + str(c), True, [0, 0, 0])
+            screen.blit(l3, [450, 600])
+            l4 = font.render('4. ' + str(d), True, [0, 0, 0])
+            screen.blit(l4, [450, 650])
+            l5 = font.render('5. ' + str(e), True, [0, 0, 0])
+            screen.blit(l5, [450, 700])
+            wave_count = 0
+            kill = -1
 
         # Обновление спрайтов
         clock.tick(60)
