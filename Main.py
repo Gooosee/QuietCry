@@ -507,12 +507,22 @@ class Person(pygame.sprite.Sprite):
             self.run(keys)
             running = True
         if not self.if_jump:
-            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:  # Нажат прыжок
+            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 3 < i:  # Нажат прыжок
                 self.tm_jump = i
                 self.if_jump = True
                 self.landing = self.rect.y
                 self.jump_count = 10
                 self.rect.y -= 40
+            elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:
+                self.tm_jump = i
+                self.if_jump = True
+                self.landing = self.rect.y
+                self.jump_count = 8
+            elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 1 < i:
+                self.tm_jump = i
+                self.if_jump = True
+                self.landing = self.rect.y
+                self.jump_count = 7
             elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1 and self.tm + 4 <= i:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
             elif keys[pygame.K_r] and self.tm + 4 <= i:
