@@ -1100,6 +1100,8 @@ def shop():
                     if but_back.clicked(event.pos, LoadImage.load_image('butBACK_a.png', 'data')):
                         shopping = False
                         clickButton()
+                        if dontdaung:
+                            pers.hp = pers.fullHP
                     else:
                         but_back.clicked(event.pos, LoadImage.load_image('butBACK_na.png', 'data'))
                     if but_on1.clicked(event.pos, LoadImage.load_image('but_on_a.png', 'data')):
