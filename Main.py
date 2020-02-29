@@ -507,22 +507,12 @@ class Person(pygame.sprite.Sprite):
             self.run(keys)
             running = True
         if not self.if_jump:
-            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 3 < i:  # Нажат прыжок
+            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:  # Нажат прыжок
                 self.tm_jump = i
                 self.if_jump = True
                 self.landing = self.rect.y
                 self.jump_count = 10
                 self.rect.y -= 40
-            elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:
-                self.tm_jump = i
-                self.if_jump = True
-                self.landing = self.rect.y
-                self.jump_count = 8
-            elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 1 < i:
-                self.tm_jump = i
-                self.if_jump = True
-                self.landing = self.rect.y
-                self.jump_count = 7
             elif keys[pygame.K_h] and not running and -self.fireSG + i >= 1 and self.tm + 4 <= i:  # Нажатие клавиши "h" для стрельбы
                 self.fire()
             elif keys[pygame.K_r] and self.tm + 4 <= i:
@@ -1094,7 +1084,6 @@ def shop():
                 if event.button == 1:
                     if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
                         clickButton()
-                        soundPlay = True
                         shopping = False
                         running = False
                         global person_sprites, all_sprites, tile_sprites, bullet_sprites, enemy_sprites, particle_sprites, aid_sprites, coin_sprites
@@ -1477,7 +1466,6 @@ def settings():
                 if event.button == 1:
                     if but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_a.png', 'data')):
                         clickButton()
-                        soundPlay = True
                         settingsO = False
                     else:
                         but_exit.clicked(event.pos, LoadImage.load_image('butEXIT_na.png', 'data'))
@@ -1582,8 +1570,7 @@ class Menu:
         self.butExit = Button.Button(992, 826, 124, 19)
 
     def updateClicked(self, pos):
-        soundBut1 = pygame.mixer.Sound('sounds/button1.wav')  # звук кнопки 1
-        soundBut1.play()
+        clickButton()
         if self.butExit.clicked(pos, LoadImage.load_image('Exit_a.png', 'data')):
             quit()
         else:
