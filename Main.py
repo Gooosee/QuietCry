@@ -507,7 +507,7 @@ class Person(pygame.sprite.Sprite):
             self.run(keys)
             running = True
         if not self.if_jump:
-            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 2 < i:  # Нажат прыжок
+            if (keys[pygame.K_UP] or keys[pygame.K_w]) and self.tm_jump + 3 < i:  # Нажат прыжок
                 self.tm_jump = i
                 self.if_jump = True
                 self.landing = self.rect.y
@@ -1650,7 +1650,7 @@ while MenuOpen:
         iIntro += 1
     pygame.display.flip()
 # Загрузка музыки
-pygame.mixer.music.load('sounds\music.mp3')
+pygame.mixer.music.load('sounds/music.mp3')
 pygame.mixer.music.play(100000)
 pygame.mixer.music.set_volume(0.5)
 
