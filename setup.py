@@ -4,5 +4,5 @@ setup(
     name = "название проги",
     version = "1.0",
     description = "описание - необязательно",
-    executables = [Executable("Main.py")]
+    executables = [Executable("QuietCry.py")]
 )
