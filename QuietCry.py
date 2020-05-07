@@ -5,6 +5,7 @@ import Button
 import pygame
 from random import choice
 import LoadImage
+import webbrowser
 
 
 pygame.init()
@@ -1363,6 +1364,9 @@ def main():  # главная функция
                         kill = 0
                         i = ii = 0
                         start()
+                elif event.key == pygame.K_u:
+                    if dead:
+                        webbrowser.open('https://vk.com', new=2)
                 elif event.key == pygame.K_q:
                     global weapon
                     if weapon == 'm4a1s' and sg:
