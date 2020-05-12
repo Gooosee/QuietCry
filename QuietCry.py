@@ -1366,7 +1366,10 @@ def main():  # главная функция
                         start()
                 elif event.key == pygame.K_u:
                     if dead:
-                        webbrowser.open('https://vk.com', new=2)
+                        try:
+                            webbrowser.open(f'http://webquietcry.herokuapp.com/appdata/{web}', new=2)
+                        except:
+                            webbrowser.open(f'http://webquietcry.herokuapp.com/appdata/0', new=2)
                 elif event.key == pygame.K_q:
                     global weapon
                     if weapon == 'm4a1s' and sg:
@@ -1416,6 +1419,8 @@ def main():  # главная функция
             screen.blit(text3, [360, 430])
             screen.blit(text4, [80, 360])
             a, b, c, d, e, label = leaderboard(kill)
+            if kill > -1:
+                web = kill
             if label:
                 font = pygame.font.Font(None, 100)
                 if label == 1:
