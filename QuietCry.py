@@ -1367,9 +1367,9 @@ def main():  # главная функция
                 elif event.key == pygame.K_u:
                     if dead:
                         try:
-                            webbrowser.open(f'http://webquietcry.herokuapp.com/apprecord/{web}', new=2)
+                            webbrowser.open(f'http://webquietcry.herokuapp.com/addRecord/{web}', new=2)
                         except:
-                            webbrowser.open(f'http://webquietcry.herokuapp.com/apprecord/0', new=2)
+                            webbrowser.open(f'http://webquietcry.herokuapp.com/addRecord/0', new=2)
                 elif event.key == pygame.K_q:
                     global weapon
                     if weapon == 'm4a1s' and sg:
